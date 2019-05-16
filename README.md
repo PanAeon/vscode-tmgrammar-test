@@ -47,6 +47,10 @@ which starts with `<comment token>` below a target line:
 
 Any lines which start with `comment token` will be ignored by the textmate grammar.
 
+Note that scope comparison takes into account scope's **position**!
+
+That is, `'s2 s1'` will be reported as error, if required scopes are `'s1 s2'`. 
+
 ### Command Line
 ```
 Usage: vscode-tmgrammar-test [options]
