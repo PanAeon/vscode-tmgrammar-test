@@ -3,6 +3,41 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        
+        {
+            "label": "Run tests",
+            "type": "shell",
+            "command": "vscode-tmgrammar-test -c -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel":"new"
+            },
+            "problemMatcher": {
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ],
+                "pattern": [
+                    {
+                        //ERROR testcase/missing.scopes.test.dhall:14:27:29 Missing required scopes: [ m5.foo ]
+                        "regexp": "^(ERROR)\\s([^:]+):(\\d+):(\\d+):(\\d+)\\s(.*)$",
+                        "severity": 1,
+                        "file": 2,
+                        "line": 3,
+                        "column": 4,
+                        "endColumn": 5,
+                        "message": 6
+                        
+                    }
+                ]
+            }
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        }
     ]
 }

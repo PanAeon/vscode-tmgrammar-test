@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs';
-import { inspect } from 'util';
+
+import * as tty from 'tty';
 
 import chalk from 'chalk';
-import path from 'path';
 import program from 'commander';
 
 import glob from 'glob';
 
 import { createRegistry, runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from 'vscode-tmgrammar-test-helper';
+
 
 // * don't forget the '' vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'
 program
@@ -18,6 +19,7 @@ program
   .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
   .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
   .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \'./tests/**/test*.dhall\'. Quotes are important!')
+  .option('-c, --compact', 'Display output in the compact format, which is easier to use with VSCode problem matchers')
   .parse(process.argv);
 
 
@@ -26,7 +28,32 @@ if (program.scope === undefined || program.grammar === undefined || program.test
 }
 
 
+let isatty = tty.isatty(1) && tty.isatty(2)
 
+const symbols = {
+    ok: '✓',
+    err: '✖',
+    dot: '․',
+    comma: ',',
+    bang: '!'
+  };
+  
+if (process.platform === 'win32') {
+    symbols.ok = '\u221A';
+    symbols.err = '\u00D7';
+    symbols.dot = '.';
+}
+
+let terminalWidth = 75;
+  
+if (isatty) {
+    terminalWidth = (process.stdout as tty.WriteStream).getWindowSize()[0];
+}
+
+
+const TestFailed = -1
+const TestSuccessful = 0
+const Padding = "  "
 
 let grammarPaths : { [key: string]: string } = {}
 
@@ -35,43 +62,131 @@ grammarPaths[program.scope] = program.grammar;
 
 const registry = createRegistry(grammarPaths) ; 
 
-// FIXME: alignment, text setup, etc ..., pretty printing for duck's sake!
+function printSourceLine(testCase: GrammarTestCase, failure: TestFailure) {
+    const line = testCase.source[failure.srcLine] 
+    const pos = (failure.line + 1) + ": "
+    const accents = " ".repeat(failure.start) + "^".repeat(failure.end - failure.start)
 
-// FIXME: actually add LICENSE !
+    const termWidth = terminalWidth - pos.length - Padding.length - 5
 
-function displayTestResult(filename: string, testCase: GrammarTestCase, failures: TestFailure[]) {
+    const trimLeft = failure.end > termWidth ? Math.max(0, failure.start - 8) : 0
+
+    const line1 = line.substr(trimLeft)
+    const accents1 = accents.substr(trimLeft)
+
+    console.log(Padding + chalk.gray(pos) + line1.substr(0, termWidth)) 
+    console.log(Padding +  " ".repeat(pos.length) + accents1.substr(0, termWidth))    
+}
+
+function printReason(testCase: GrammarTestCase, failure: TestFailure) {
+    if (failure.missing && failure.missing.length > 0) {
+        console.log(chalk.red(Padding + "missing required scopes: ") + chalk.gray(failure.missing.join(" ")))
+    }
+    if (failure.unexpected && failure.unexpected.length > 0) {
+        console.log(chalk.red(Padding + "prohibited scopes: ") + chalk.gray(failure.unexpected.join(" ")))
+    }
+    if (failure.misordered !== undefined) {
+        console.log(chalk.red(Padding + "scopes are out of order."))
+        console.log(chalk.green(Padding + "expected: ") + chalk.gray(failure.misordered.expected.join(" ")))
+        console.log(chalk.red(Padding + "actual: ") + chalk.gray(failure.misordered.actual.join(" ")))
+    }
+}
+
+function displayTestResultFull(filename: string, testCase: GrammarTestCase, failures: TestFailure[]): number {
     if (failures.length === 0) {
-        console.log(chalk.green("[OK]") + `${filename} run successfuly.`)
+        console.log(chalk.green(symbols.ok) + " " + chalk.whiteBright(filename) + ` run successfuly.`)
+        return TestSuccessful;
     } else {
-        console.log(chalk.red("[ERROR]") + `${filename} failed.`)
-        console.log(failures);
+        console.log(chalk.red(symbols.err + " " + filename + " failed"))
+        failures.forEach(failure => {
+            const {l,s,e} = getCorrectedOffsets(failure)
+            console.log(Padding + "at [" + chalk.whiteBright(`${filename}:${l}:${s}:${e}`) + "]: ")
+            printSourceLine(testCase, failure);
+            printReason(testCase, failure);
+            
+            console.log("\n")
+        });
+        console.log("");
+        return TestFailed;
     }
     
 }
 
-function handleGrammarTestError(filename: string, testCase: GrammarTestCase, reason:any) {
-    console.log(reason);
+function renderCompactErrorMsg(testCase: GrammarTestCase, failure: TestFailure): string {
+    let res = ""
+    if (failure.missing && failure.missing.length > 0) {
+        res += `Missing required scopes: [ ${failure.missing.join(" ")} ] `
+    }
+    if (failure.unexpected && failure.unexpected.length > 0) {
+        res += `Prohibited scopes: [ ${failure.unexpected.join(" ")} ] `
+    }
+    if (failure.misordered !== undefined) {
+        res += `Scopes are out of order, expected: [${failure.misordered.expected.join(" ")}], actual: [${failure.misordered.actual.join(" ")}]`
+    }
+    return res;
 }
 
+function displayTestResultCompact(filename: string, testCase: GrammarTestCase, failures: TestFailure[]): number {
+    if (failures.length === 0) {
+        console.log(chalk.green(symbols.ok) + " " + chalk.whiteBright(filename) + ` run successfuly.`)
+        return TestSuccessful;
+    } else {
+        failures.forEach(failure => {
+            console.log(`ERROR ${filename}:${failure.line + 1}:${failure.start + 1}:${failure.end+1} ${renderCompactErrorMsg(testCase, failure)}`)
+            
+        });
+        return TestFailed;
+    }
+}
+
+function handleGrammarTestError(filename: string, testCase: GrammarTestCase, reason:any): number {
+    console.log(chalk.red(symbols.err) + " testcase " + chalk.gray(filename) + " aborted due to an error")
+    console.log(reason);
+    return TestFailed;
+}
+
+const displayTestResult = program.compact ? displayTestResultCompact : displayTestResultFull;
 
 glob(program.testcases, (err,files) => {
     if (err !== null) {
         console.log(chalk.red("ERROR") + " glob pattern is incorrect: '" + chalk.gray(program.testcases) + "'")
         console.log(err)
-        return;
+        process.exit(-1)
     }
-    files.forEach(filename => {
+    const testResults: Promise<number[]> = Promise.all(files.map(filename => {
+        let tc: any = undefined;
         try {
-          const testCase = parseGrammarTestCase(fs.readFileSync(filename).toString())
-          runGrammarTestCase(registry, testCase).then( 
-              (failures:TestFailure[]) => { displayTestResult(filename, testCase, failures) }, 
-              (error: any) => { handleGrammarTestError(filename, testCase, error) })
+            tc = parseGrammarTestCase(fs.readFileSync(filename).toString())
         } catch(error) {
-            console.log(error); // ! FIXME: bad, need to thread into the general error for consistent display, also EXIT VALUE !!!
+            console.log(chalk.red("ERROR") + " can't parse testcase: " + chalk.whiteBright(filename) + "")
+            console.log(error)
+            return new Promise((resolve, reject) => { resolve(TestFailed); });
         }
-    });
-    // files is an array of filenames.
-    // If the `nonull` option is set, and nothing
-    // was found, then files is ["**/*.js"]
-    // er is an error object or null.
+        let testCase = tc as GrammarTestCase;
+        return runGrammarTestCase(registry, testCase).then( (failures) => { 
+                    return displayTestResult(filename, testCase, failures) 
+                }).catch((error: any) => { 
+                    return handleGrammarTestError(filename, testCase, error);
+                })
+          
+    }));
+    
+    testResults.then(xs => {
+        const result = xs.reduce( (a,b) => a + b, 0)
+        if (result === TestSuccessful) {
+            process.exit(0);
+        } else {
+            process.exit(-1);
+        }
+    })
+   
 });
+
+
+function getCorrectedOffsets(failure: TestFailure): { l:number, s:number, e:number} {
+    return {
+        l: failure.line + 1,
+        s: failure.start + 1,
+        e: failure.end + 1
+    }
+}

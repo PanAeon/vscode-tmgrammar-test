@@ -17,7 +17,7 @@ in  { home       = "/home/${user}"
 --                 ^^^^^^^^^^^^^^^^^^^^^^^^^^  - source.dhall
     , publicKey  = "/home/${user}/id_ed25519.pub"
 --                        ^^^^^^^ constant.other.placeholder.dhall
---                          ^^^^   - meta.label.dhall   
+--                          ^^^^   meta.label.dhall   
 }
 -- <- - meta.declaration.data.record.block.dhall keyword.operator.record.end.dhall
 
