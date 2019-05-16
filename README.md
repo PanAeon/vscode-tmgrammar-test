@@ -2,7 +2,7 @@
 
 Provides a way to test textmate grammars against a vscode engine using user-friendly plaintext files.
 
-![Failed test](images/test.failed2.png?raw=true "missed some scopes")
+![Failed test](images/test.failed.2.png?raw=true "missed some scopes")
 
 
 Inspired by [Sublime Text syntax tests](https://www.sublimetext.com/docs/3/syntax.html#testing)
