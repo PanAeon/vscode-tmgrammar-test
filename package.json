@@ -1,6 +1,6 @@
 {
   "name": "vscode-tmgrammar-test",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Test helper for VSCode textmate grammars",
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
@@ -45,6 +45,6 @@
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
     "glob": "^7.1.4",
-    "vscode-tmgrammar-test-helper": "^0.0.1"
+    "vscode-tmgrammar-test-helper": "^0.0.3"
   }
 }

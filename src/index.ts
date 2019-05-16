@@ -85,10 +85,8 @@ function printReason(testCase: GrammarTestCase, failure: TestFailure) {
     if (failure.unexpected && failure.unexpected.length > 0) {
         console.log(chalk.red(Padding + "prohibited scopes: ") + chalk.gray(failure.unexpected.join(" ")))
     }
-    if (failure.misordered !== undefined) {
-        console.log(chalk.red(Padding + "scopes are out of order."))
-        console.log(chalk.green(Padding + "expected: ") + chalk.gray(failure.misordered.expected.join(" ")))
-        console.log(chalk.red(Padding + "actual: ") + chalk.gray(failure.misordered.actual.join(" ")))
+    if (failure.actual !== undefined) {
+        console.log(chalk.red(Padding + "actual: ") + chalk.gray(failure.actual.join(" ")))
     }
 }
 
@@ -120,8 +118,8 @@ function renderCompactErrorMsg(testCase: GrammarTestCase, failure: TestFailure):
     if (failure.unexpected && failure.unexpected.length > 0) {
         res += `Prohibited scopes: [ ${failure.unexpected.join(" ")} ] `
     }
-    if (failure.misordered !== undefined) {
-        res += `Scopes are out of order, expected: [${failure.misordered.expected.join(" ")}], actual: [${failure.misordered.actual.join(" ")}]`
+    if (failure.actual !== undefined) {
+        res += `actual scopes: [${failure.actual.join(" ")}]`
     }
     return res;
 }
