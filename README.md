@@ -89,7 +89,6 @@ You can setup a vscode test task for convenience:
                 ],
                 "pattern": [
                     {
-                        //ERROR testcase/missing.scopes.test.dhall:14:27:29 Missing required scopes: [ m5.foo ]
                         "regexp": "^(ERROR)\\s([^:]+):(\\d+):(\\d+):(\\d+)\\s(.*)$",
                         "severity": 1,
                         "file": 2,
