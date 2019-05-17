@@ -2,56 +2,90 @@
 
 Provides a way to test textmate grammars against a vscode engine using user-friendly plaintext files.
 
-![Failed test](images/test.failed.2.png?raw=true "missed some scopes")
+![Showcase](images/showcase.gif?raw=true "grammar test in action")
 
 
 Inspired by [Sublime Text syntax tests](https://www.sublimetext.com/docs/3/syntax.html#testing)
 
-### Setup
+### Installation
+
+As a project dependency:
+
 ```bash
-npm install -g vscode-tmgrammar-test
+npm i --save vscode-tmgrammar-test
+```
+
+Or as a standalone command line tool:
+
+```bash
+npm i -g vscode-tmgrammar-test
 vscode-tmgrammar-test --help
 ```
+
+
 ### Test cases
 
-```dhall
--- SYNTAX TEST "source.dhall" "optional description"
+```scala
+// SYNTAX TEST "source.scala" "sample testcase"
 
-let user = "bill" 
---        ^ - string.quoted.double.dhall 
---               ^ - string.quoted.double.dhall
-in  { home       = "/home/${user}"
--- <~~~~- keyword.operator.record.begin.dhall - foo
-    , privateKey = "/home/${user}/id_ed25519"
---    ^^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall  variable.object.property.dhall
---               ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall punctuation.separator.dictionary.key-value.dhall
---                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ source.dhall string.quoted.double.dhall
-    , publicKey  = "/home/${user}/id_ed25519.pub"
---                        ^^^^^^^ constant.other.placeholder.dhall
---                          ^^^^   meta.label.dhall   
+// line which start with a <comment token> but don't have valid assertions are ignored
+
+class Stack[A] {
+// <-----  keyword.declaration.scala
+//   ^ - keyword.declaration.scala entity.name.class.declaration
+//    ^^^^^  entity.name.class.declaration 
+//         ^  source.scala meta.bracket.scala
+//          ^  entity.name.class
+//           ^  meta.bracket.scala
+//             ^  punctuation.section.block.begin.scala
+  private var elements: List[A] = Nil
+    def push(x: A) { elements = x :: elements }
+    def peek: A = elements.head
+    def pop(): A = {
+      val currentTop = peek
+      elements = elements.tail
+      currentTop
+  }
+// <~~- punctuation.section.block.end.scala
 }
--- <- keyword.operator.record.end.dhall
- -- comment
--- <~- comment.line.double-dash.dhall - meta.declaration.data.record.block.dhall
+  
 ```
 
-Each test case starts with a header line:
-`<comment token> SYNTAX TEST "<language scope>" "optional description"`
+To write a test case:
 
-You can require tokens to have specific scope by using either `^` or `<-` on the lines
-which starts with `<comment token>` below a target line:
-*    `^^^` scope1 scope2 ...  will require all tokens above the accents to have specified scopes.
-*    `^^` ... `-` scope1 scope2 ... will prohibit tokens above the `^` to have any of specified scopes
-*    `<--` scopes.. will match from the beginning of the string. The number of character matched is the number of dashes in the arrow.
-*    `<~~-` scopes... same as above but will be offset by the number of `~` characters. Might be useful if `comment token` has got more then one character
+* include a header line:
+
+```        
+<comment token> SYNTAX TEST "<language scope>" "optional description"
+```     
+
+* Require tokens to have specific scope by using `^`&nbsp;&nbsp;:
+
+```scala
+private var elements: List[A] = Nil
+//          ^^^^^^^^ variable.other.declaration.scala
+```
+
+* Get into those pesky first few characters by using `<-`:
+
+```scala
+var x = 3
+// <--- keyword.declaration.volatile.scala
+//  the length of '-' determine how many characters are matched from the start of the line
+x=5
+//  <~- keyword.operator.comparison.scala
+//  you specify offset from start by using '~' character, just in case
+```
+
+* Ensure that tokens **don't** have undesired scopes by using&nbsp;&nbsp; `- scopes`&nbsp;:
 
 Any lines which start with `comment token` will be ignored by the textmate grammar.
 
-Note that scope comparison takes into account scope's **position**!
 
-That is, `'s2 s1'` will be reported as error, if required scopes are `'s1 s2'`. 
+Note, that scope comparison takes into account relative scope's position.
+So, if required scopes are `'scope1 scope2'`, the test will report an error if a grammar returns them as `'scope2 scope1'`. 
 
-### Command Line
+### Command Line Options
 ```
 Usage: vscode-tmgrammar-test [options]
 
@@ -66,7 +100,7 @@ Options:
   -h, --help               output usage information
 ```
   
-for example:
+Example:
 
 ```bash
 > vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'
