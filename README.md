@@ -78,8 +78,12 @@ x=5
 ```
 
 * Ensure that tokens **don't** have undesired scopes by using&nbsp;&nbsp; `- scopes`&nbsp;:
+```scala
+   // ensure comment start with two double slashes 
+  ^ - comment.line.double-slash.scala punctuation.definition.comment.scala 
+```
 
-Any lines which start with `comment token` will be ignored by the textmate grammar.
+Any lines which start with a `<comment token>` will be ignored by the textmate grammar.
 
 
 Note, that scope comparison takes into account relative scope's position.
@@ -141,7 +145,7 @@ You can setup a vscode test task for convenience:
         }
 ```
 
-Notice the `-c` option that will output messages in a convenient format for the problemMatcher.
+Notice the `-c` option that will output messages in a handy format for the problemMatcher.
 
 Result:
 
