@@ -505,7 +505,7 @@
             ]
         },
         "record": {
-            "name": "meta.declaration.data.record.block.dhall foo",
+            "name": "meta.declaration.data.record.block.dhall",
             "begin": "\\{",
             "beginCaptures": {
                 "0": {

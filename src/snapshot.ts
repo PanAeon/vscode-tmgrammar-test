@@ -14,9 +14,9 @@ import { createRegistry } from './unit/index';
 import { getVSCodeTokens } from './snapshot/index'
 import { renderSnap, parseSnap } from './snapshot/parsing'
 import { AnnotatedLine, IToken } from './snapshot/model';
-import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
+// import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import { inspect } from 'util';
-// import * as diff from 'diff'; 
+import * as diff from 'diff'; // ok, diff doesn't really work. what about text diff
 
 // var packageJson = require('../package.json');
 // .version(process.env.npm_package_version as string)
@@ -212,18 +212,76 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         return TestFailed;
     }
     
-    const wrongLines = expected.map((e,i) => {
-        const d: any = detailedDiff(e, actual[i])
-        console.log("+: " + inspect(d.added, false, 5, true))
-        console.log("*: " + inspect(d.updated, false, 5, true))
-        console.log("-: " + inspect(d.deleted, false, 5, true))
+    const wrongLines = expected.map((exp,i) => {
+        const act = actual[i];
+        if (exp.src !== act.src) {
+            console.log(`source different snapshot: ${exp.src}, actual: ${act.src}`)
+            return {}
+        }
+
+        const expTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, exp.tokens)
+        const actTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, act.tokens)
+
+        const extraExpected = exp.tokens.filter(t => actTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined)
+        const extraActual   = act.tokens.filter(t => expTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined)
+
+        if (extraExpected.length) {
+          console.log(`extraExpected (--): ` + inspect(extraExpected, false, 5, true))
+        }
+        if (extraActual.length) {
+          console.log(`extraActual (++): ` + inspect(extraActual, false, 5, true))
+        }
+        // now when we click:
+
+        const lineNumberOffset = printSourceLine(exp.src, i)
+
+        act.tokens.forEach(a => {
+            const e = expTokenMap[`${a.startIndex}:${a.startIndex}`]
+            if (e !== undefined) {
+                const changes = diff.diffArrays(e.scopes, a.scopes)
+                const formatted = changes.map (change => {
+                    let color = change.added ? chalk.green : (change.removed ? chalk.red : chalk.gray);
+                    return color(change.value.join(" "));
+                    // if (change.added) {
+                    //     // console.log(chalk.green(change.value));
+                    // }
+                    // if (change.removed) {
+                    //     console.log("removed: " + inspect(change))
+                    // }
+                    // console.log("")
+                });
+                if (changes.length === 1 && !changes[0].added && !changes[0].removed) {
+                    // ignore
+                } else {
+                    printAccents(lineNumberOffset, a.startIndex, a.endIndex, formatted.join(" "))
+                    // console.log(formatted.join(" "))
+                }
+                // console.log('token change: ' + inspect(change, false, 5, true))
+                // console.log(chalk.blueBright("-----"))
+            }
+            
+        });
+        // almost working !!!
+        // TODO: output string
+        // TODO: output ^^
+        // TODO: sort by offset (and length?)
         
+        // const d: any = detailedDiff(exp, actual[i])
+        // console.log("+: " + inspect(d.added, false, 5, true))
+        // console.log("*: " + inspect(d.updated, false, 5, true))
+        // console.log("-: " + inspect(d.deleted, false, 5, true))
+        console.log(chalk.blueBright("-----"))
     });
     console.log("unimplemented...")
     return TestFailed;
 }
 
-
+function toMap<T>(f : (x:T) => string, xs: T[]): { [key: string]: T } {
+    return xs.reduce((m: { [key: string]: T }, x: T) => {
+        m[f(x)] = x;
+        return m;
+    }, {});
+}
 
 function arraysEqual<T>(a: T[], b:T[]) : boolean {
     if (a === b) { return true };
@@ -236,3 +294,23 @@ function arraysEqual<T>(a: T[], b:T[]) : boolean {
     return true;
 }
 
+function printSourceLine(line: String, n: number): number { 
+    const pos = (n + 1) + ": "
+    // const accents = " ".repeat(failure.start) + "^".repeat(failure.end - failure.start)
+
+    // const termWidth = terminalWidth - pos.length - Padding.length - 5
+
+    // const trimLeft = failure.end > termWidth ? Math.max(0, failure.start - 8) : 0
+
+    // const line1 = line.substr(trimLeft)
+    // const accents1 = accents.substr(trimLeft)
+
+    console.log(Padding + chalk.gray(pos) + line) 
+    return pos.length
+    // console.log(Padding +  " ".repeat(pos.length) + accents1.substr(0, termWidth))    
+}
+
+function printAccents(offset: number, from: number, to: number, diff: string) {
+   const accents = " ".repeat(from) + "^".repeat(to - from)
+  console.log(Padding + " ".repeat(offset) + accents + " " + diff)
+}
