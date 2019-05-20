@@ -9,7 +9,7 @@ import program from 'commander';
 
 import glob from 'glob';
 
-import { createRegistry, runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from 'vscode-tmgrammar-test-helper';
+import { createRegistry, runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from './unit/index';
 
 
 // * don't forget the '' vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'
