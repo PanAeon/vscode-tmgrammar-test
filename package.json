@@ -1,6 +1,6 @@
 {
   "name": "vscode-tmgrammar-test",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Test helper for VSCode textmate grammars",
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
@@ -17,7 +17,8 @@
     "test": "mocha  -r ts-node/register test/**/*.test.ts"
   },
   "bin": {
-    "vscode-tmgrammar-test": "./dist/src/unit.js"
+    "vscode-tmgrammar-test": "./dist/src/unit.js",
+    "vscode-tmgrammar-snap": "./dist/src/snapshot.js"
   },
   "keywords": [
     "test",
@@ -35,6 +36,7 @@
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^12.0.0",
+    "@types/diff": "^4.0.2",
     "chai": "^4.2.0",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5",
@@ -44,6 +46,9 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
+    "deep-diff": "^1.0.2",
+    "deep-object-diff": "^1.1.0",
+    "diff": "^4.0.1",
     "glob": "^7.1.4",
     "vscode-textmate": "^4.1.1"
   }

@@ -11,10 +11,12 @@ import glob from 'glob';
 
 import { createRegistry, runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from './unit/index';
 
+// var packageJson = require('../package.json');
+// .version(process.env.npm_package_version as string)
 
 // * don't forget the '' vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'
 program
-  .version('0.0.1')
+  .version("0.0.4")
   .description("Run Textmate grammar test cases using vscode-textmate")
   .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
   .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
@@ -149,6 +151,10 @@ glob(program.testcases, (err,files) => {
     if (err !== null) {
         console.log(chalk.red("ERROR") + " glob pattern is incorrect: '" + chalk.gray(program.testcases) + "'")
         console.log(err)
+        process.exit(-1)
+    }
+    if(files.length === null) {
+        console.log(chalk.red("ERROR") + " no test cases found")
         process.exit(-1)
     }
     const testResults: Promise<number[]> = Promise.all(files.map(filename => {
