@@ -28,6 +28,7 @@ program
   .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
   .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \'./tests/**/test*.dhall\'. Quotes are important!')
   .option("-u, --updateSnapshot", 'overwrite all snap files with new changes')
+  .option("--printNotModified", 'include not modified scopes in the output', false)
   .parse(process.argv);
 
 
@@ -207,17 +208,23 @@ function testFailed() : Promise<number> {
 
 
 function renderTestResult(filename: string, expected: AnnotatedLine[], actual: AnnotatedLine[]) : number {
+    
     if (expected.length !== actual.length) {
-        console.log(chalk.red("ERROR") + " snapshot and actual file contain different number of lines. testcase: ")
+        console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(" snapshot and actual file contain different number of lines.\n"))
         return TestFailed;
     }
-    
-    const wrongLines = expected.map((exp,i) => {
+
+    for (let i = 0; i < expected.length; i++) {
+        const exp = expected[i];
         const act = actual[i];
         if (exp.src !== act.src) {
-            console.log(`source different snapshot: ${exp.src}, actual: ${act.src}`)
-            return {}
+            console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(` source different snapshot at line ${i+1}.\n expected: ${exp.src}\n actual: ${act.src}\n`))
+            return TestFailed;
         }
+    }
+    
+    const wrongLines = flatten(expected.map((exp,i) => {
+        const act = actual[i];
 
         const expTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, exp.tokens)
         const actTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, act.tokens)
@@ -225,7 +232,7 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         const removed = exp.tokens.filter(t => actTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined).map(t => {
             return <TChanges> {
                 changes: [<TChange> {
-                    text: chalk.red(t.scopes.join(" ")),
+                    text: t.scopes.join(" "),
                     changeType: Removed
                 }],
                 from: t.startIndex,
@@ -236,19 +243,14 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         const added   = act.tokens.filter(t => expTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined).map(t => {
             return <TChanges> {
                 changes: [<TChange> {
-                    text: chalk.green(t.scopes.join(" ")),
+                    text: t.scopes.join(" "),
                     changeType: Added
                 }],
                 from: t.startIndex,
                 to: t.endIndex
             }
         });
-        
-        
-
-        // TODO: don't show not modified in text mode
-        // TODO: create temporary result file with the full output
-
+    
         const modified = flatten(act.tokens.map(a => {
             const e = expTokenMap[`${a.startIndex}:${a.startIndex}`]
             if (e !== undefined) {
@@ -258,10 +260,9 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
                 }
 
                 const  tchanges = changes.map (change => {
-                    let color = change.added ? chalk.green : (change.removed ? chalk.red : chalk.gray);
                     let changeType = change.added ? Added : (change.removed ? Removed : NotModified);
                     return <TChange> {
-                        text: color(change.value.join(" ")),
+                        text: change.value.join(" "),
                         changeType: changeType
                     };
                 });
@@ -277,21 +278,41 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         }));
 
         const allChanges = modified.concat(added).concat(removed).sort( (x,y) => (x.from - y.from) * 10000 + (x.to - y.to) )
-
-        const printNotModified = false 
         if (allChanges.length > 0) {
-          const lineNumberOffset = printSourceLine(exp.src, i)
-          allChanges.forEach(tchanges => { 
-            const change = tchanges.changes.filter(c => printNotModified || c.changeType !== NotModified).map(c => c.text).join(" ")
+            return [[allChanges, exp.src, i] as [TChanges[], string, number]];
+        } else {
+            return [];
+        }
+    }));
+
+    if (wrongLines.length > 0) {
+        console.log(chalk.red("ERROR in test case ") + chalk.whiteBright(filename))
+        console.log(Padding + Padding + chalk.red("-- existing snapshot"))
+        console.log(Padding + Padding + chalk.green("++ new changes"))
+        console.log()
+        wrongLines.forEach( ([changes, src, i]) => {
+          const lineNumberOffset = printSourceLine(src, i)
+          changes.forEach(tchanges => { 
+            const change = tchanges.changes.filter(c => program.printNotModified || c.changeType !== NotModified).map(c => {
+                let color = c.changeType === Added ? chalk.green : (c.changeType === Removed ? chalk.red : chalk.gray);
+                return color(c.text);
+            }).join(" ")
             printAccents(lineNumberOffset, tchanges.from, tchanges.to, change)
           })
-        }
+          console.log();
+        });
+        console.log();
+        return TestFailed;
+    } else {
+        console.log(chalk.green(symbols.ok) + " " + chalk.whiteBright(filename) + " run successfully.")
+        return TestSuccessful;
+    }
 
+    // const printNotModified = false 
+    //     if (allChanges.length > 0) {
+   
+    //     }
 
-        // console.log(chalk.blueBright("-----"))
-    });
-    console.log("unimplemented...")
-    return TestFailed;
 }
 
 function toMap<T>(f : (x:T) => string, xs: T[]): { [key: string]: T } {

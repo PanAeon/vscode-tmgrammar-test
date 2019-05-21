@@ -416,7 +416,7 @@
             "name": "meta.label.dhall",
             "patterns": [
                 {
-                    "name": "meta.label.dhall",
+                    "name": "foo",
                     "match": "(?:\\p{Alpha}|_)(?:\\p{Alpha}|\\d|[-/_])*"
                 },
                 {
@@ -459,7 +459,7 @@
             ]
         },
         "labelPropertyType": {
-            "name": "constant.other.attribute-name.dhall",
+            "name": "ff",
             "patterns": [
                 {
                     "name": "constant.other.attribute-name.dhall",
@@ -512,7 +512,7 @@
                     "name": "keyword.operator.record.begin.dhall"
                 }
             },
-            "end": ".",
+            "end": "\\}",
             "endCaptures": {
                 "0": {
                     "name": "keyword.operator.record.end.dhall"
