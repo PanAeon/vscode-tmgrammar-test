@@ -241,10 +241,10 @@ function printDiffOnTwoLines(wrongLines: [TChanges[], string, number][]) {
     wrongLines.forEach(([changes, src, i]) => {
         const lineNumberOffset = printSourceLine(src, i)
         changes.forEach(tchanges => {
-            const removed = tchanges.changes.filter(c => c.changeType === Removed).map(c => {
+            const removed = tchanges.changes.filter(c => c.changeType === Removed || (c.changeType === NotModified && program.printNotModified)).map(c => {
                 return chalk.red(c.text);
             }).join(" ")
-            const added = tchanges.changes.filter(c => c.changeType === Added).map(c => {
+            const added = tchanges.changes.filter(c => c.changeType === Added || (c.changeType === NotModified && program.printNotModified)).map(c => {
                 return chalk.green(c.text);
             }).join(" ")
             printAccents1(lineNumberOffset, tchanges.from, tchanges.to, chalk.red("-- ") + removed, Removed)
