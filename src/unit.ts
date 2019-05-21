@@ -153,7 +153,7 @@ glob(program.testcases, (err,files) => {
         console.log(err)
         process.exit(-1)
     }
-    if(files.length === null) {
+    if(files.length === 0) {
         console.log(chalk.red("ERROR") + " no test cases found")
         process.exit(-1)
     }

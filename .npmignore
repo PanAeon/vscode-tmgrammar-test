@@ -8,3 +8,5 @@
 /images
 /testcase
 /shell.nix
+/dist/test
+/*.tgz

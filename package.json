@@ -46,8 +46,6 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
-    "deep-diff": "^1.0.2",
-    "deep-object-diff": "^1.1.0",
     "diff": "^4.0.1",
     "glob": "^7.1.4",
     "vscode-textmate": "^4.1.1"
