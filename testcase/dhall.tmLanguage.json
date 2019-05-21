@@ -512,7 +512,7 @@
                     "name": "keyword.operator.record.begin.dhall"
                 }
             },
-            "end": "\\}",
+            "end": ".",
             "endCaptures": {
                 "0": {
                     "name": "keyword.operator.record.end.dhall"

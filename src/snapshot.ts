@@ -222,55 +222,73 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         const expTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, exp.tokens)
         const actTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, act.tokens)
 
-        const extraExpected = exp.tokens.filter(t => actTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined)
-        const extraActual   = act.tokens.filter(t => expTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined)
+        const removed = exp.tokens.filter(t => actTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined).map(t => {
+            return <TChanges> {
+                changes: [<TChange> {
+                    text: chalk.red(t.scopes.join(" ")),
+                    changeType: Removed
+                }],
+                from: t.startIndex,
+                to: t.endIndex,
+                
+            }
+        });
+        const added   = act.tokens.filter(t => expTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined).map(t => {
+            return <TChanges> {
+                changes: [<TChange> {
+                    text: chalk.green(t.scopes.join(" ")),
+                    changeType: Added
+                }],
+                from: t.startIndex,
+                to: t.endIndex
+            }
+        });
+        
+        
 
-        if (extraExpected.length) {
-          console.log(`extraExpected (--): ` + inspect(extraExpected, false, 5, true))
-        }
-        if (extraActual.length) {
-          console.log(`extraActual (++): ` + inspect(extraActual, false, 5, true))
-        }
-        // now when we click:
+        // TODO: don't show not modified in text mode
+        // TODO: create temporary result file with the full output
 
-        const lineNumberOffset = printSourceLine(exp.src, i)
-
-        act.tokens.forEach(a => {
+        const modified = flatten(act.tokens.map(a => {
             const e = expTokenMap[`${a.startIndex}:${a.startIndex}`]
             if (e !== undefined) {
                 const changes = diff.diffArrays(e.scopes, a.scopes)
-                const formatted = changes.map (change => {
-                    let color = change.added ? chalk.green : (change.removed ? chalk.red : chalk.gray);
-                    return color(change.value.join(" "));
-                    // if (change.added) {
-                    //     // console.log(chalk.green(change.value));
-                    // }
-                    // if (change.removed) {
-                    //     console.log("removed: " + inspect(change))
-                    // }
-                    // console.log("")
-                });
                 if (changes.length === 1 && !changes[0].added && !changes[0].removed) {
-                    // ignore
-                } else {
-                    printAccents(lineNumberOffset, a.startIndex, a.endIndex, formatted.join(" "))
-                    // console.log(formatted.join(" "))
+                    return []
                 }
-                // console.log('token change: ' + inspect(change, false, 5, true))
-                // console.log(chalk.blueBright("-----"))
+
+                const  tchanges = changes.map (change => {
+                    let color = change.added ? chalk.green : (change.removed ? chalk.red : chalk.gray);
+                    let changeType = change.added ? Added : (change.removed ? Removed : NotModified);
+                    return <TChange> {
+                        text: color(change.value.join(" ")),
+                        changeType: changeType
+                    };
+                });
+                return [<TChanges> {
+                    changes: tchanges,
+                    from: a.startIndex,
+                    to: a.endIndex
+                }]
+
+            } else {
+                return [];
             }
-            
-        });
-        // almost working !!!
-        // TODO: output string
-        // TODO: output ^^
-        // TODO: sort by offset (and length?)
-        
-        // const d: any = detailedDiff(exp, actual[i])
-        // console.log("+: " + inspect(d.added, false, 5, true))
-        // console.log("*: " + inspect(d.updated, false, 5, true))
-        // console.log("-: " + inspect(d.deleted, false, 5, true))
-        console.log(chalk.blueBright("-----"))
+        }));
+
+        const allChanges = modified.concat(added).concat(removed).sort( (x,y) => (x.from - y.from) * 10000 + (x.to - y.to) )
+
+        const printNotModified = false 
+        if (allChanges.length > 0) {
+          const lineNumberOffset = printSourceLine(exp.src, i)
+          allChanges.forEach(tchanges => { 
+            const change = tchanges.changes.filter(c => printNotModified || c.changeType !== NotModified).map(c => c.text).join(" ")
+            printAccents(lineNumberOffset, tchanges.from, tchanges.to, change)
+          })
+        }
+
+
+        // console.log(chalk.blueBright("-----"))
     });
     console.log("unimplemented...")
     return TestFailed;
@@ -293,6 +311,25 @@ function arraysEqual<T>(a: T[], b:T[]) : boolean {
     }
     return true;
 }
+
+function flatten<T>(arr: T[][]): T[] {
+    return arr.reduce((acc, val) => acc.concat(val), []);
+}
+
+interface TChanges {
+    changes: TChange[]
+    from: number
+    to: number
+}
+
+interface TChange {
+    text: string
+    changeType: number // 0 - not modified, 1 - removed, 2 - added
+}
+
+const NotModified = 0
+const Removed = 1
+const Added = 2
 
 function printSourceLine(line: String, n: number): number { 
     const pos = (n + 1) + ": "
