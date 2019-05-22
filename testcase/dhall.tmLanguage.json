@@ -416,7 +416,7 @@
             "name": "meta.label.dhall",
             "patterns": [
                 {
-                    "name": "foo",
+                    "name": "meta.abel.dhall",
                     "match": "(?:\\p{Alpha}|_)(?:\\p{Alpha}|\\d|[-/_])*"
                 },
                 {
