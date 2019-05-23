@@ -126,6 +126,8 @@ function testFailed(): Promise<number> {
 
 function renderTestResult(filename: string, expected: AnnotatedLine[], actual: AnnotatedLine[]): number {
 
+    
+
     if (expected.length !== actual.length) {
         console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(" snapshot and actual file contain different number of lines.\n"))
         return TestFailed;
@@ -140,11 +142,25 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         }
     }
 
-    const wrongLines = flatten(expected.map((exp, i) => {
-        const act = actual[i];
+    // renderSnap won't produce assertions for empty lines, so we'll remove them here
+    // for both actual end expected
+    let actual1 = actual.filter(a => a.src.trim().length > 0);
+    let expected1 = actual.filter(a => a.src.trim().length > 0);
+
+    // console.log(inspect(expected, false, 5, true))
+    //     console.log(" ")
+    //     console.log(" ")
+    //     console.log(inspect(actual, false, 5, true))
+    //     process.exit(-1)
+
+    const wrongLines = flatten(expected1.map((exp, i) => {
+        const act = actual1[i];
 
         const expTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, exp.tokens)
         const actTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, act.tokens)
+
+        
+
 
         const removed = exp.tokens.filter(t => actTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined).map(t => {
             return <TChanges>{
