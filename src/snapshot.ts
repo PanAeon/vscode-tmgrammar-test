@@ -145,7 +145,7 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
     // renderSnap won't produce assertions for empty lines, so we'll remove them here
     // for both actual end expected
     let actual1 = actual.filter(a => a.src.trim().length > 0);
-    let expected1 = actual.filter(a => a.src.trim().length > 0);
+    let expected1 = expected.filter(a => a.src.trim().length > 0);
 
     // console.log(inspect(expected, false, 5, true))
     //     console.log(" ")

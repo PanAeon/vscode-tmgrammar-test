@@ -416,7 +416,7 @@
             "name": "meta.label.dhall",
             "patterns": [
                 {
-                    "name": "meta.abel.dhall",
+                    "name": "meta.label.dhall",
                     "match": "(?:\\p{Alpha}|_)(?:\\p{Alpha}|\\d|[-/_])*"
                 },
                 {
@@ -439,7 +439,7 @@
             "name": "variable.other.constant.dhall",
             "patterns": [
                 {
-                    "name": "variable.other.constant.dhall",
+                    "name": "variable.ther.constant.dhall",
                     "match": "(?:\\p{Alpha}|_)(?:\\p{Alpha}|\\d|[-/_])*"
                 },
                 {
