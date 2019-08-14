@@ -41,8 +41,7 @@
     "tslint": "^5.16.0",
     "typescript": "^3.4.5",
     "ts-node": "^8.1.0",
-    "mocha": "^6.1.4",
-    "lodash": ">=4.17.13"
+    "mocha": "^6.2.0"
   },
   "dependencies": {
     "chalk": "^2.4.2",
