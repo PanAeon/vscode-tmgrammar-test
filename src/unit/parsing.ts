@@ -1,5 +1,6 @@
 
 import { ScopeAssertion, TestCaseMetadata, LineAssertion, GrammarTestCase } from './model';
+import { EOL } from 'os';
 
 const leftArrowAssertRegex = /^\s*<([~]*)([-]+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
 const upArrowAssertRegex = /^\s*(\^+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
@@ -78,7 +79,7 @@ export function parseHeader(as: string[]): TestCaseMetadata {
 
 export function parseGrammarTestCase(str: string): GrammarTestCase {
     let headerLength = 1;
-    let lines = str.split("\n")
+    let lines = str.split(EOL);
     let metadata = parseHeader(lines)
     let { commentToken } = metadata
     let rest = lines.slice(headerLength)

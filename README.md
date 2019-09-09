@@ -125,7 +125,7 @@ Options:
   -V, --version            output the version number
   -s, --scope <scope>      Language scope, e.g. source.dhall
   -g, --grammar <grammar>  Path to a grammar file, either .json or .xml
-  -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. './tests/**/test*.dhall'. Quotes are important!
+  -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
   -c, --compact            Display output in the compact format, which is easier to use with VSCode problem matchers
   -h, --help               output usage information
 ```
@@ -140,7 +140,7 @@ Options:
   -V, --version            output the version number
   -s, --scope <scope>      Language scope, e.g. source.dhall
   -g, --grammar <grammar>  Path to a grammar file, either .json or .xml
-  -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. './tests/**/test*.dhall'. Quotes are important!
+  -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
   -u, --updateSnapshot     overwrite all snap files with new changes
   --printNotModified       include not modified scopes in the output
   --expandDiff             produce each diff on two lines prefixed with "++" and "--"
@@ -150,7 +150,7 @@ Options:
 Example:
 
 ```bash
-> vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'
+> vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t "**/*.dhall"
 ```
 
 ### Setup VSCode unit test task
@@ -161,7 +161,7 @@ You can setup a vscode unit test task for convenience:
 {
             "label": "Run tests",
             "type": "shell",
-            "command": "vscode-tmgrammar-test -c -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'",
+            "command": "vscode-tmgrammar-test -c -s source.dhall -g testcase/dhall.tmLanguage.json -t \"**/*.dhall\"",
             "group": "test",
             "presentation": {
                 "reveal": "always",

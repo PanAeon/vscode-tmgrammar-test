@@ -26,7 +26,7 @@ program
     .description("Run VSCode textmate grammar snapshot tests")
     .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
     .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
-    .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \'./tests/**/test*.dhall\'. Quotes are important!')
+    .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \"./tests/**/test*.dhall\". Quotes are important!')
     .option("-u, --updateSnapshot", 'overwrite all snap files with new changes')
     .option("--printNotModified", 'include not modified scopes in the output', false)
     .option("--expandDiff", 'produce each diff on two lines prefixed with "++" and "--"', false)
