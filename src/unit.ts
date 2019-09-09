@@ -20,7 +20,7 @@ program
   .description("Run Textmate grammar test cases using vscode-textmate")
   .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
   .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
-  .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \'./tests/**/test*.dhall\'. Quotes are important!')
+  .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \"./tests/**/test*.dhall\". Quotes are important!')
   .option('-c, --compact', 'Display output in the compact format, which is easier to use with VSCode problem matchers')
   .parse(process.argv);
 
