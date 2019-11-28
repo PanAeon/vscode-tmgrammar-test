@@ -172,7 +172,15 @@ describe('parseGrammarTestCase', () => {
         let testFile = fs.readFileSync('./test/resources/parser.test.dhall').toString()
         expect(parseGrammarTestCase(testFile)).to.eql(parserTestDhallExpectedResult)
     });
+
+    it('should parse a test case with a windows line endings', () => {
+        let originalFile = fs.readFileSync('./test/resources/parser.test.dhall').toString()
+        let crlfFile = originalFile.split("\n").join("\r\n")
+        expect(parseGrammarTestCase(crlfFile)).to.eql(parserTestDhallExpectedResult)
+    });
 });
+
+
 
 const parserTestDhallExpectedResult = {
     metadata:

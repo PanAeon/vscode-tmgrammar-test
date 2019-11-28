@@ -1,10 +1,10 @@
 
 import {AnnotatedLine, IToken} from "./model"
-import {EOL} from 'os'
+
 
 export function parseSnap(s:string): AnnotatedLine[] {
     let result: AnnotatedLine[] = []
-    let ls = s.split(EOL)
+    let ls = s.split(/\r\n|\n/)
     let i = 0
     while(i < ls.length) {
         let l = ls[i];
@@ -31,7 +31,7 @@ export function parseSnap(s:string): AnnotatedLine[] {
             i++;
         }
     }
-    
+
     return result;
 }
 

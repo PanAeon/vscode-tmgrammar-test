@@ -16,7 +16,7 @@ import { renderSnap, parseSnap } from './snapshot/parsing'
 import { AnnotatedLine, IToken } from './snapshot/model';
 
 import { inspect } from 'util';
-import * as diff from 'diff'; // ok, diff doesn't really work. what about text diff
+import * as diff from 'diff';
 
 let packageJson = require('../../package.json');
 
