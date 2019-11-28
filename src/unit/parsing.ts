@@ -1,6 +1,5 @@
 
 import { ScopeAssertion, TestCaseMetadata, LineAssertion, GrammarTestCase } from './model';
-import { EOL } from 'os';
 
 const leftArrowAssertRegex = /^\s*<([~]*)([-]+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
 const upArrowAssertRegex = /^\s*(\^+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
@@ -53,7 +52,7 @@ let headerErrorMessage = "Expecting the first line in the syntax test file to be
 
 let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*$/
 
-/* 
+/*
   parse the first line with the format:
   <comment character(s)> SYNTAX TEST "<language identifier>" <"description">?
 */
@@ -67,7 +66,7 @@ export function parseHeader(as: string[]): TestCaseMetadata {
         throw new Error(headerErrorMessage);
     } else {
         let [_, commentToken, scope, description = ""] = matchResult;
-       
+
         return <TestCaseMetadata>{
             commentToken: commentToken,
             scope: scope,
@@ -79,7 +78,7 @@ export function parseHeader(as: string[]): TestCaseMetadata {
 
 export function parseGrammarTestCase(str: string): GrammarTestCase {
     let headerLength = 1;
-    let lines = str.split(EOL);
+    let lines = str.split(/\r\n|\n/);
     let metadata = parseHeader(lines)
     let { commentToken } = metadata
     let rest = lines.slice(headerLength)

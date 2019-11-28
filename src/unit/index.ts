@@ -13,7 +13,9 @@ export {parseGrammarTestCase, GrammarTestCase, TestFailure, missingScopes_}
 export async function runGrammarTestCase(registry: tm.Registry, testCase: GrammarTestCase): Promise<TestFailure[]> {
     return registry.loadGrammar(testCase.metadata.scope).then((grammar: tm.IGrammar|null) => {
 
-        if (!grammar) throw new Error(`Could not load scope ${testCase.metadata.scope}`);
+        if (!grammar) {
+          throw new Error(`Could not load scope ${testCase.metadata.scope}`);
+        }
 
         const assertions = toMap((x) => x.sourceLineNumber, testCase.assertions)
 
@@ -34,28 +36,28 @@ export async function runGrammarTestCase(registry: tm.Registry, testCase: Gramma
                         failures.push(<TestFailure>{
                             missing: requiredScopes,
                             unexpected: [],
-                            actual: [], 
-                            line: testCaseLineNumber, 
-                            srcLine: n, 
-                            start: from, 
+                            actual: [],
+                            line: testCaseLineNumber,
+                            srcLine: n,
+                            start: from,
                             end: to
                         });
                     } else {
                         xs.forEach((token) => {
                             const unexpected = excludedScopes.filter((s) => { return token.scopes.includes(s) })
-                            const missing = missingScopes_(requiredScopes, token.scopes) 
-                            
+                            const missing = missingScopes_(requiredScopes, token.scopes)
+
                             if (missing.length || unexpected.length) {
-                                failures.push(<TestFailure>{ 
-                                    missing: missing, 
+                                failures.push(<TestFailure>{
+                                    missing: missing,
                                     actual: token.scopes,
                                     unexpected: unexpected,
-                                    line: testCaseLineNumber, 
-                                    srcLine: n, 
-                                    start: token.startIndex, 
-                                    end: token.endIndex 
+                                    line: testCaseLineNumber,
+                                    srcLine: n,
+                                    start: token.startIndex,
+                                    end: token.endIndex
                                 });
-                            }                   
+                            }
                         });
                     }
                 })
@@ -105,7 +107,7 @@ function missingScopes_(rs:string[], as: string[]):string[] {
           i++
       }
     }
-    
+
     return j === rs.length ? [] : rs.slice(j);
 }
 
