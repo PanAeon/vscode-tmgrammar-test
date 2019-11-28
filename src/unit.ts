@@ -156,8 +156,8 @@ glob(program.testcases, (err,files) => {
         console.log(chalk.red("ERROR") + " no test cases found")
         process.exit(-1)
     }
-    const testResults: Promise<number[]> = Promise.all(files.map(filename => {
-        let tc: any = undefined;
+    const testResults: Promise<number[]> = Promise.all(files.map((filename): Promise<number> => {
+        let tc: GrammarTestCase|undefined = undefined;
         try {
             tc = parseGrammarTestCase(fs.readFileSync(filename).toString())
         } catch(error) {

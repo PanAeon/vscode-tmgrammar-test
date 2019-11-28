@@ -11,7 +11,9 @@ export {parseGrammarTestCase, GrammarTestCase, TestFailure, missingScopes_}
 
 
 export async function runGrammarTestCase(registry: tm.Registry, testCase: GrammarTestCase): Promise<TestFailure[]> {
-    return registry.loadGrammar(testCase.metadata.scope).then((grammar: tm.IGrammar) => {
+    return registry.loadGrammar(testCase.metadata.scope).then((grammar: tm.IGrammar|null) => {
+
+        if (!grammar) throw new Error(`Could not load scope ${testCase.metadata.scope}`);
 
         const assertions = toMap((x) => x.sourceLineNumber, testCase.assertions)
 
