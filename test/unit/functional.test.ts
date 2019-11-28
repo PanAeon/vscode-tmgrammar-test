@@ -4,9 +4,7 @@ import * as fs from 'fs'
 
 import { parseGrammarTestCase, GrammarTestCase, TestFailure, runGrammarTestCase, createRegistry } from '../../src/unit/index'
 
-var registry = createRegistry({
-    'source.dhall': './test/resources/dhall.tmLanguage.json'
-});
+var registry = createRegistry(['./test/resources/dhall.tmLanguage.json']);
 
 function loadFile(filename: string): string {
     return fs.readFileSync(filename).toString();

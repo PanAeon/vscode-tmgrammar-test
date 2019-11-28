@@ -38,7 +38,7 @@ vscode-tmgrammar-test --help
 class Stack[A] {
 // <-----  keyword.declaration.scala
 //   ^ - keyword.declaration.scala entity.name.class.declaration
-//    ^^^^^  entity.name.class.declaration 
+//    ^^^^^  entity.name.class.declaration
 //         ^  source.scala meta.bracket.scala
 //          ^  entity.name.class
 //           ^  meta.bracket.scala
@@ -53,16 +53,16 @@ class Stack[A] {
   }
 // <~~- punctuation.section.block.end.scala
 }
-  
+
 ```
 
 To write a unit test:
 
 * include a header line:
 
-```        
+```
 <comment token> SYNTAX TEST "<language scope>" "optional description"
-```     
+```
 
 * Require tokens to have specific scope by using `^`&nbsp;&nbsp;:
 
@@ -84,8 +84,8 @@ x=5
 
 * Ensure that tokens **don't** have undesired scopes by using&nbsp;&nbsp; `- scopes`&nbsp;:
 ```scala
-   // ensure comment start with two double slashes 
-  ^ - comment.line.double-slash.scala punctuation.definition.comment.scala 
+   // ensure comment start with two double slashes
+  ^ - comment.line.double-slash.scala punctuation.definition.comment.scala
 ```
 
 Any lines which start with a `<comment token>` will be ignored by the textmate grammar.
@@ -95,8 +95,8 @@ Note, that scope comparison takes into account relative scope's position.
 So, if required scopes are `'scope1 scope2'`, the test will report an error if a grammar returns them as `'scope2 scope1'`.
 
 ### Snapshot tests
-Snapshot tests are like `functional tests` but you don't have to write outputs explicitly. 
-All you have to do is to provide a source files, scopes of which you want to test. Then on 
+Snapshot tests are like `functional tests` but you don't have to write outputs explicitly.
+All you have to do is to provide a source files, scopes of which you want to test. Then on
 the first run `vscode-tmgrammar-snap` will generate a set of `.snap` files which are an
 instant snapshot of lines of the source files together with corresponding scopes.
 
@@ -124,7 +124,7 @@ Run Textmate grammar test cases using vscode-textmate
 Options:
   -V, --version            output the version number
   -s, --scope <scope>      Language scope, e.g. source.dhall
-  -g, --grammar <grammar>  Path to a grammar file, either .json or .xml
+  -g, --grammar <grammar>  Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed. (default: [])
   -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
   -c, --compact            Display output in the compact format, which is easier to use with VSCode problem matchers
   -h, --help               output usage information
@@ -139,7 +139,7 @@ Run VSCode textmate grammar snapshot tests
 Options:
   -V, --version            output the version number
   -s, --scope <scope>      Language scope, e.g. source.dhall
-  -g, --grammar <grammar>  Path to a grammar file, either .json or .xml
+  -g, --grammar <grammar>  Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed. (default: [])
   -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
   -u, --updateSnapshot     overwrite all snap files with new changes
   --printNotModified       include not modified scopes in the output
@@ -181,7 +181,7 @@ You can setup a vscode unit test task for convenience:
                         "column": 4,
                         "endColumn": 5,
                         "message": 6
-                        
+
                     }
                 ]
             }

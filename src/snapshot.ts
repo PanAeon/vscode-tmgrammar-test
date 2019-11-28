@@ -20,11 +20,15 @@ import * as diff from 'diff';
 
 let packageJson = require('../../package.json');
 
+function collectGrammarOpts(value:String, previous:String[]):String[] {
+    return previous.concat([value]);
+}
+
 program
     .version(packageJson.version)
     .description("Run VSCode textmate grammar snapshot tests")
     .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
-    .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
+    .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed.', collectGrammarOpts, [])
     .option('-t, --testcases <glob>', 'A glob pattern which specifies testcases to run, e.g. \"./tests/**/test*.dhall\". Quotes are important!')
     .option("-u, --updateSnapshot", 'overwrite all snap files with new changes')
     .option("--printNotModified", 'include not modified scopes in the output', false)
@@ -32,7 +36,7 @@ program
     .parse(process.argv);
 
 
-if (program.scope === undefined || program.grammar === undefined || program.testcases === undefined) {
+if (program.scope === undefined || program.grammar === undefined || program.grammar.length === 0 || program.testcases === undefined) {
     program.help()
 }
 
@@ -64,11 +68,8 @@ const TestFailed = -1
 const TestSuccessful = 0
 const Padding = "  "
 
-let grammarPaths: { [key: string]: string } = {}
 
-grammarPaths[program.scope] = program.grammar;
-
-const registry = createRegistry(grammarPaths);
+const registry = createRegistry(program.grammar);
 
 glob(program.testcases, (err, files0) => {
     if (err !== null) {

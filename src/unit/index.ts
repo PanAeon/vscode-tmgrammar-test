@@ -69,22 +69,20 @@ export async function runGrammarTestCase(registry: tm.Registry, testCase: Gramma
 }
 
 
-export function createRegistry(grammarPaths: { [key: string]: string }) : tm.Registry {
+export function createRegistry(grammarPaths: string[]) : tm.Registry {
+  let grammars: { [key: string]: tm.IRawGrammar } = {}
+
+  for (let path of grammarPaths) {
+    let content = fs.readFileSync(path).toString()
+    let rawGrammar = tm.parseRawGrammar(content, path)
+    grammars[rawGrammar.scopeName] = rawGrammar;
+  }
+
   return new tm.Registry(<tm.RegistryOptions>{
     loadGrammar: function (scopeName) {
-        var path = grammarPaths[scopeName];
-
-        if (path) {
+        if (grammars[scopeName] !== undefined) {
             return new Promise((c, e) => {
-                fs.readFile(path, (error, content) => {
-                    if (error) {
-                        console.log(error)
-                        e(error);
-                    } else {
-                        var rawGrammar = tm.parseRawGrammar(content.toString(), path);
-                        c(rawGrammar);
-                    }
-                });
+                c(grammars[scopeName]);
             });
         } else {
             console.warn("grammar not found for '" + scopeName + "'")

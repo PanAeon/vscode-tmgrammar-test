@@ -36,7 +36,7 @@
 #                   ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                    ^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                          ^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
-#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.abel.dhall
+#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
 #                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
 #                                 ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 >    , privateKey = "/home/${user}/id_ed25519"
@@ -50,7 +50,7 @@
 #                   ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                    ^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                          ^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
-#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.abel.dhall
+#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
 #                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
 #                                 ^^^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                                            ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
@@ -65,7 +65,7 @@
 #                   ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                    ^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                          ^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
-#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.abel.dhall
+#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
 #                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
 #                                 ^^^^^^^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 #                                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
