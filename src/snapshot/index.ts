@@ -8,7 +8,9 @@ import { EOL } from 'os';
 
 
 export async function getVSCodeTokens(registry: tm.Registry, scope: string, source: string): Promise<AnnotatedLine[]> {
-    return registry.loadGrammar(scope).then((grammar: tm.IGrammar) => {
+    return registry.loadGrammar(scope).then((grammar: tm.IGrammar|null) => {
+
+        if (!grammar) throw new Error(`Could not load scope ${scope}`);
 
         let ruleStack: tm.StackElement = <any>null;
 
