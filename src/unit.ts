@@ -11,12 +11,11 @@ import glob from 'glob';
 
 import { createRegistry, runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from './unit/index';
 
-// var packageJson = require('../package.json');
-// .version(process.env.npm_package_version as string)
+let packageJson = require('../../package.json');
 
 // * don't forget the '' vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t '**/*.dhall'
 program
-  .version("0.0.4")
+  .version(packageJson.version)
   .description("Run Textmate grammar test cases using vscode-textmate")
   .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
   .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
@@ -39,7 +38,7 @@ const symbols = {
     comma: ',',
     bang: '!'
   };
-  
+
 if (process.platform === 'win32') {
     symbols.ok = '\u221A';
     symbols.err = '\u00D7';
@@ -47,7 +46,7 @@ if (process.platform === 'win32') {
 }
 
 let terminalWidth = 75;
-  
+
 if (isatty) {
     terminalWidth = (process.stdout as tty.WriteStream).getWindowSize()[0];
 }
@@ -62,10 +61,10 @@ let grammarPaths : { [key: string]: string } = {}
 grammarPaths[program.scope] = program.grammar;
 
 
-const registry = createRegistry(grammarPaths) ; 
+const registry = createRegistry(grammarPaths) ;
 
 function printSourceLine(testCase: GrammarTestCase, failure: TestFailure) {
-    const line = testCase.source[failure.srcLine] 
+    const line = testCase.source[failure.srcLine]
     const pos = (failure.line + 1) + ": "
     const accents = " ".repeat(failure.start) + "^".repeat(failure.end - failure.start)
 
@@ -76,8 +75,8 @@ function printSourceLine(testCase: GrammarTestCase, failure: TestFailure) {
     const line1 = line.substr(trimLeft)
     const accents1 = accents.substr(trimLeft)
 
-    console.log(Padding + chalk.gray(pos) + line1.substr(0, termWidth)) 
-    console.log(Padding +  " ".repeat(pos.length) + accents1.substr(0, termWidth))    
+    console.log(Padding + chalk.gray(pos) + line1.substr(0, termWidth))
+    console.log(Padding +  " ".repeat(pos.length) + accents1.substr(0, termWidth))
 }
 
 function printReason(testCase: GrammarTestCase, failure: TestFailure) {
@@ -103,13 +102,13 @@ function displayTestResultFull(filename: string, testCase: GrammarTestCase, fail
             console.log(Padding + "at [" + chalk.whiteBright(`${filename}:${l}:${s}:${e}`) + "]: ")
             printSourceLine(testCase, failure);
             printReason(testCase, failure);
-            
+
             console.log("\n")
         });
         console.log("");
         return TestFailed;
     }
-    
+
 }
 
 function renderCompactErrorMsg(testCase: GrammarTestCase, failure: TestFailure): string {
@@ -133,7 +132,7 @@ function displayTestResultCompact(filename: string, testCase: GrammarTestCase, f
     } else {
         failures.forEach(failure => {
             console.log(`ERROR ${filename}:${failure.line + 1}:${failure.start + 1}:${failure.end+1} ${renderCompactErrorMsg(testCase, failure)}`)
-            
+
         });
         return TestFailed;
     }
@@ -167,14 +166,14 @@ glob(program.testcases, (err,files) => {
             return new Promise((resolve, reject) => { resolve(TestFailed); });
         }
         let testCase = tc as GrammarTestCase;
-        return runGrammarTestCase(registry, testCase).then( (failures) => { 
-                    return displayTestResult(filename, testCase, failures) 
-                }).catch((error: any) => { 
+        return runGrammarTestCase(registry, testCase).then( (failures) => {
+                    return displayTestResult(filename, testCase, failures)
+                }).catch((error: any) => {
                     return handleGrammarTestError(filename, testCase, error);
                 })
-          
+
     }));
-    
+
     testResults.then(xs => {
         const result = xs.reduce( (a,b) => a + b, 0)
         if (result === TestSuccessful) {
@@ -183,7 +182,7 @@ glob(program.testcases, (err,files) => {
             process.exit(-1);
         }
     })
-   
+
 });
 
 

@@ -14,15 +14,14 @@ import { createRegistry } from './unit/index';
 import { getVSCodeTokens } from './snapshot/index'
 import { renderSnap, parseSnap } from './snapshot/parsing'
 import { AnnotatedLine, IToken } from './snapshot/model';
-// import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
+
 import { inspect } from 'util';
 import * as diff from 'diff'; // ok, diff doesn't really work. what about text diff
 
-// var packageJson = require('../package.json');
-// .version(process.env.npm_package_version as string)
+let packageJson = require('../../package.json');
 
 program
-    .version("0.0.4")
+    .version(packageJson.version)
     .description("Run VSCode textmate grammar snapshot tests")
     .option('-s, --scope <scope>', 'Language scope, e.g. source.dhall')
     .option('-g, --grammar <grammar>', 'Path to a grammar file, either .json or .xml')
@@ -126,7 +125,7 @@ function testFailed(): Promise<number> {
 
 function renderTestResult(filename: string, expected: AnnotatedLine[], actual: AnnotatedLine[]): number {
 
-    
+
 
     if (expected.length !== actual.length) {
         console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(" snapshot and actual file contain different number of lines.\n"))
@@ -159,7 +158,7 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         const expTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, exp.tokens)
         const actTokenMap = toMap(t => `${t.startIndex}:${t.startIndex}`, act.tokens)
 
-        
+
 
 
         const removed = exp.tokens.filter(t => actTokenMap[`${t.startIndex}:${t.startIndex}`] === undefined).map(t => {
