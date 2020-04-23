@@ -9,6 +9,14 @@ stdenv.mkDerivation {
   # The packages in the `buildInputs` list will be added to the PATH in our shell
   buildInputs = [
     # see https://nixos.org/nixos/packages.html to search for more
-    pkgs.nodejs-10_x coreutils nodePackages_10_x.node-gyp nodePackages_10_x.node-gyp-build nodePackages_10_x.node-pre-gyp nodePackages_10_x.typescript pkgs.python
+    pkgs.nodejs-12_x
+    coreutils
+    pkgs.python
+   # pkgs.nodejs-12_x coreutils 
+   # nodePackages_12_x.node-gyp 
+   # nodePackages_12_x.node-gyp-build 
+   # nodePackages_12_x.node-pre-gyp 
+   # nodePackages_12_x.typescript 
+   # pkgs.python
   ];
 }

@@ -32,22 +32,22 @@
   "author": "vitalii voloshyn",
   "license": "MIT",
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/glob": "^7.1.1",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^12.0.0",
+    "@types/chai": "^4.2.11",
     "@types/diff": "^4.0.2",
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.37",
     "chai": "^4.2.0",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5",
-    "ts-node": "^8.1.0",
-    "mocha": "^6.2.0"
+    "mocha": "^6.2.3",
+    "ts-node": "^8.9.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "commander": "^2.20.0",
-    "diff": "^4.0.1",
-    "glob": "^7.1.4",
+    "commander": "^2.20.3",
+    "diff": "^4.0.2",
+    "glob": "^7.1.6",
     "vscode-textmate": "^4.1.1"
   }
 }

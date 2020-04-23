@@ -13,7 +13,7 @@
 >-- comment
 #^^ source.dhall comment.line.double-dash.dhall
 #  ^^^^^^^^ source.dhall comment.line.double-dash.dhall
->let user = "bill" 
+>let user = "bill"
 #^^^ source.dhall meta.declaration.expression.let.dhall keyword.other.let.dhall
 #   ^ source.dhall meta.declaration.expression.let.dhall
 #    ^^^^ source.dhall meta.declaration.expression.let.dhall variable.other.constant.dhall
@@ -23,7 +23,6 @@
 #           ^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall string.quoted.double.dhall
 #            ^^^^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall string.quoted.double.dhall
 #                ^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall string.quoted.double.dhall
-#                 ^^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall
 >in  { home       = "/home/${user}"
 #^^ source.dhall keyword.control.dhall
 #  ^^ source.dhall

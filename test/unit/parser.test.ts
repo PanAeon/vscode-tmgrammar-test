@@ -34,136 +34,161 @@ describe('parseHeader', () => {
 describe('parseScopeAssertion', () => {
     it('should parse single ^ accent', () => {
         expect(parseScopeAssertion(0, 1, "#^ source.dhall")).to.eql(
-            {
+            [{
                 "from": 1,
                 "scopes": [
                     "source.dhall"
                 ],
                 exclude: [],
                 "to": 2
-            }
+            }]
         )
     });
     it('should parse multiple ^^^^ accents', () => {
         expect(parseScopeAssertion(0, 1, "#  ^^^^^^ source.dhall")).to.eql(
-            {
+            [{
                 "from": 3,
                 "scopes": [
                     "source.dhall"
                 ],
                 exclude: [],
                 "to": 9
-            }
+            }]
         )
     });
 
     it('should parse multiple scopes', () => {
         expect(parseScopeAssertion(0, 1, "# ^^ source.dhall variable.other.dhall")).to.eql(
-            {
+            [{
                 "from": 2,
                 "scopes": [
                     "source.dhall", "variable.other.dhall"
                 ],
                 exclude: [],
                 "to": 4
-            }
+            }]
         )
     });
 
-    it('should not parse multiple accent groups', () => {
-        expect(parseScopeAssertion(0, 1, "# ^^ ^^^ source.dhall")).to.eq(undefined)
+    it('should parse multiple accent groups', () => {
+        expect(parseScopeAssertion(0, 1, "# ^^ ^^^ source.dhall")).to.deep.equal([
+              {
+                "exclude": [],
+                "from": 2,
+                "scopes": [
+                  "source.dhall"
+             ],
+                "to": 4
+              },
+              {
+                "exclude": [],
+                "from": 5,
+                "scopes": [
+                  "source.dhall"
+                ],
+                "to": 8
+              }
+            ])
     });
 
     it('should parse single <- left arrow', () => {
         expect(parseScopeAssertion(0, 1, "# <- source.dhall")).to.eql(
-            {
+            [{
                 "from": 0,
                 "scopes": [
                     "source.dhall"
                 ],
                 exclude: [],
                 "to": 1
-            }
+            }]
         )
     });
 
     it('should parse multi <~~--- left arrow with padding', () => {
         expect(parseScopeAssertion(0, 1, "# <~~~--- source.dhall")).to.eql(
-            {
+            [{
                 "from": 3,
                 "scopes": [
                     "source.dhall"
                 ],
                 exclude: [],
                 "to": 6
-            }
+            }]
         )
     });
     it('should parse single ^ accent with exclusion', () => {
         expect(parseScopeAssertion(0, 1, "#^ - source.dhall")).to.eql(
-            {
+            [{
                 "from": 1,
                 "scopes": [],
                 exclude: ["source.dhall"],
                 "to": 2
-            }
+            }]
         )
     });
     it('should parse  ^^^ accents with scopes and exclusion', () => {
         expect(parseScopeAssertion(0, 1, "#^^^ foo.bar bar - source.dhall foo")).to.eql(
-            {
+            [{
                 "from": 1,
                 "scopes": ["foo.bar", "bar"],
                 exclude: ["source.dhall", "foo"],
                 "to": 4
-            }
+            }]
         )
     });
     it('should parse <- with exclusion', () => {
         expect(parseScopeAssertion(0, 1, "#<- - source.dhall")).to.eql(
-            {
+            [{
                 "from": 0,
                 "scopes": [],
                 exclude: ["source.dhall"],
                 "to": 1
-            }
+            }]
         )
     });
     it('should parse  <- with scopes and exclusion', () => {
         expect(parseScopeAssertion(0, 1, "#<-- foo.bar bar - source.dhall foo")).to.eql(
-            {
+            [{
                 "from": 0,
                 "scopes": ["foo.bar", "bar"],
                 exclude: ["source.dhall", "foo"],
                 "to": 2
-            }
+            }]
         )
     });
     it('should parse correctly treat spaces at the end with ^^', () => {
         expect(parseScopeAssertion(0, 1, "#^^ foo - bar   ")).to.eql(
-            {
+            [{
                 "from": 1,
                 "scopes": ["foo"],
                 exclude: ["bar"],
                 "to": 3
-            }
+            }]
         )
     });
     it('should parse correctly treat spaces at the end with  <- ', () => {
         expect(parseScopeAssertion(0, 1, "#<-- foo ")).to.eql(
-            {
+            [{
                 "from": 0,
                 "scopes": ["foo"],
                 exclude: [],
                 "to": 2
-            }
+            }]
         )
     });
-    it('should ignore empty <- ', () => {
-        expect(parseScopeAssertion(0, 1, "#<-- - ")).to.eq(undefined)
+    it('should throw an error for an empty <- ', () => {
+        expect(() => parseScopeAssertion(0, 1, "#<-- - "))
+          .to
+          .throw('Inalid assertion at line 0:\n'
+               + '#<-- - \n'
+               + ' Missing both required and prohibited scopes')
     });
-    it('should ignore empty ^ ', () => {
-        expect(parseScopeAssertion(0, 1, "# ^^^ ")).to.eq(undefined)
+    it('should throw an error on empty ^ ', () => {
+        expect(() => parseScopeAssertion(0, 1, "# ^^^ "))
+        .to
+        .throw('Inalid assertion at line 0:\n'
+             + '# ^^^ \n'
+             + ' Missing both required and prohibited scopes')
     });
 });
 

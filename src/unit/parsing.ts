@@ -1,27 +1,40 @@
 
 import { ScopeAssertion, TestCaseMetadata, LineAssertion, GrammarTestCase } from './model';
+// import { start } from 'repl';
 
 const leftArrowAssertRegex = /^\s*<([~]*)([-]+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
-const upArrowAssertRegex = /^\s*(\^+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
+const upArrowAssertRegex = /^\s*((?:(?:\^+)\s*)+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
 
 
-export function parseScopeAssertion(testCaseLineNumber: number, commentLength: number, as: String): ScopeAssertion | void {
+export function parseScopeAssertion(testCaseLineNumber: number, commentLength: number, as: String): ScopeAssertion[] {
     let s = as.slice(commentLength)
 
-    let upArrowMatch = upArrowAssertRegex.exec(s)
+    if (s.trim().startsWith('^')) {
+        let upArrowMatch = upArrowAssertRegex.exec(s)
+        if (upArrowMatch !== null) {
+            let [,, scopes = "", exclusions = ""] = upArrowMatch
 
-    if (upArrowMatch !== null) {
-        let [_, arrows, scopes = "", exclusions = ""] = upArrowMatch
-        let startIdx = commentLength + s.indexOf("^")
-        if (scopes === "" && exclusions === "") {
-            return undefined;
-        } else {
-            return <ScopeAssertion>{
-                from: startIdx,
-                to: startIdx + arrows.length,
-                scopes: scopes.split(/\s+/).filter((x) => x),
-                exclude: exclusions.split(/\s+/).filter((x) => x)
+
+            if (scopes === "" && exclusions === "") {
+               throw new Error(`Inalid assertion at line ${testCaseLineNumber}:\n${as}\n Missing both required and prohibited scopes`)
+            } else {
+                const result = []
+                let startIdx =  s.indexOf("^")
+                while(startIdx !== -1) {
+                    let endIndx = startIdx
+                    while(s[endIndx + 1] === '^') { endIndx++ }
+                    result.push(<ScopeAssertion>{
+                        from: commentLength + startIdx,
+                        to: commentLength + endIndx + 1,
+                        scopes: scopes.split(/\s+/).filter((x) => x),
+                        exclude: exclusions.split(/\s+/).filter((x) => x)
+                    })
+                    startIdx =  s.indexOf("^", endIndx+1)
+                }
+                return result;
             }
+        } else {
+            throw new Error(`Inalid assertion at line ${testCaseLineNumber}:\n${as}\n`)
         }
     }
 
@@ -30,18 +43,18 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
     if (leftArrowMatch !== null) {
         let [_, tildas, dashes, scopes = "", exclusions = ""] = leftArrowMatch
         if (scopes === "" && exclusions === "") {
-            return undefined;
+            throw new Error(`Inalid assertion at line ${testCaseLineNumber}:\n${as}\n Missing both required and prohibited scopes`)
         } else {
-            return <ScopeAssertion>{
+            return [{
                 from: tildas.length,
                 to: tildas.length + dashes.length,
                 scopes: scopes.split(/\s+/).filter((x) => x),
                 exclude: exclusions.split(/\s+/).filter((x) => x)
-            }
+            }]
         }
     }
 
-    return undefined;
+    return [];
 
 }
 
@@ -100,10 +113,9 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
         let tcLineNumber = headerLength + i;
 
         if (s.startsWith(commentToken)) {
-            let a = parseScopeAssertion(tcLineNumber, commentToken.length, s)
-            if (a !== undefined) {
-                currentLineAssertion.scopeAssertions.push(a);
-            }
+            let as = parseScopeAssertion(tcLineNumber, commentToken.length, s)
+            currentLineAssertion.scopeAssertions = [...currentLineAssertion.scopeAssertions, ...as]
+
             // if (!skipComments) {
             //     source.push(s)
             //     sourceLineNumber++;
