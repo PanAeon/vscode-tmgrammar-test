@@ -1,5 +1,6 @@
 
 import { ScopeAssertion, TestCaseMetadata, LineAssertion, GrammarTestCase } from './model';
+import { EOL } from 'os'
 // import { start } from 'repl';
 
 const leftArrowAssertRegex = /^\s*<([~]*)([-]+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
@@ -16,7 +17,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
 
 
             if (scopes === "" && exclusions === "") {
-               throw new Error(`Inalid assertion at line ${testCaseLineNumber}:\n${as}\n Missing both required and prohibited scopes`)
+               throw new Error(`Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`)
             } else {
                 const result = []
                 let startIdx =  s.indexOf("^")
@@ -34,7 +35,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
                 return result;
             }
         } else {
-            throw new Error(`Inalid assertion at line ${testCaseLineNumber}:\n${as}\n`)
+            throw new Error(`Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL}`)
         }
     }
 
@@ -43,7 +44,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
     if (leftArrowMatch !== null) {
         let [_, tildas, dashes, scopes = "", exclusions = ""] = leftArrowMatch
         if (scopes === "" && exclusions === "") {
-            throw new Error(`Inalid assertion at line ${testCaseLineNumber}:\n${as}\n Missing both required and prohibited scopes`)
+            throw new Error(`Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`)
         } else {
             return [{
                 from: tildas.length,
@@ -60,8 +61,8 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
 
 
 
-let headerErrorMessage = "Expecting the first line in the syntax test file to be in the following format:\n" +
-    "<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?\n"
+let headerErrorMessage = `Expecting the first line in the syntax test file to be in the following format:${EOL}` +
+    `<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?${EOL}`
 
 let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*$/
 

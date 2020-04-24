@@ -11,11 +11,13 @@ import glob from 'glob';
 
 import { createRegistry } from './unit/index';
 
+import { EOL } from 'os'
+
 import { getVSCodeTokens } from './snapshot/index'
 import { renderSnap, parseSnap } from './snapshot/parsing'
 import { AnnotatedLine, IToken } from './snapshot/model';
 
-import { inspect } from 'util';
+// import { inspect } from 'util';
 import * as diff from 'diff';
 
 let packageJson = require('../../package.json');
@@ -129,7 +131,7 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
 
 
     if (expected.length !== actual.length) {
-        console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(" snapshot and actual file contain different number of lines.\n"))
+        console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(` snapshot and actual file contain different number of lines.${EOL}`))
         return TestFailed;
     }
 
@@ -137,7 +139,7 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         const exp = expected[i];
         const act = actual[i];
         if (exp.src !== act.src) {
-            console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(` source different snapshot at line ${i + 1}.\n expected: ${exp.src}\n actual: ${act.src}\n`))
+            console.log(chalk.red("ERROR running testcase ") + chalk.whiteBright(filename) + chalk.red(` source different snapshot at line ${i + 1}.${EOL} expected: ${exp.src}${EOL} actual: ${act.src}${EOL}`))
             return TestFailed;
         }
     }

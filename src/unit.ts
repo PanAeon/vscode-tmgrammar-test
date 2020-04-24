@@ -9,6 +9,8 @@ import program from 'commander';
 
 import glob from 'glob';
 
+import { EOL } from 'os'
+
 import { createRegistry, runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from './unit/index';
 
 let packageJson = require('../../package.json');
@@ -103,7 +105,7 @@ function displayTestResultFull(filename: string, testCase: GrammarTestCase, fail
             printSourceLine(testCase, failure);
             printReason(testCase, failure);
 
-            console.log("\n")
+            console.log(EOL)
         });
         console.log("");
         return TestFailed;
