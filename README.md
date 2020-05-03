@@ -1,4 +1,6 @@
+![Node.js CI](https://img.shields.io/github/workflow/status/PanAeon/vscode-tmgrammar-test/Node.js%20CI?style=for-the-badge) ![NPM Version](https://img.shields.io/npm/v/vscode-tmgrammar-test?style=for-the-badge)
 ## VSCode Textmate grammar test
+
 
 Provides a way to test textmate grammars against a vscode engine using user-friendly plaintext files.
 
