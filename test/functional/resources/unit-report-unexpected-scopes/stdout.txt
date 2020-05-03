@@ -1,68 +1,68 @@
-✖ /home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall failed
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:12:5:6]: 
+✖ <root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall failed
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:12:5:6]:
   12: in  { home       = "/home/${user}"
           ^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall keyword.operator.record.begin.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:7:17]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:7:17]:
   14:     , privateKey = "/home/${user}/id_ed25519"
             ^^^^^^^^^^
   prohibited scopes: variable.object.property.dhall source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall variable.object.property.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:20:21]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:20:21]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                          ^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:21:27]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:21:27]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                           ^^^^^^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:27:29]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:27:29]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                                 ^^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:29:33]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:29:33]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                                   ^^^^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:33:34]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:33:34]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                                       ^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:34:45]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:34:45]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                                        ^^^^^^^^^^^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:45:46]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:14:45:46]:
   14:     , privateKey = "/home/${user}/id_ed25519"
                                                   ^
   prohibited scopes: source.dhall
   actual: source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
 
 
-  at [/home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:21:1:2]: 
+  at [<root>/test/functional/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall:21:1:2]:
   21: }
       ^
   prohibited scopes: meta.declaration.data.record.block.dhall keyword.operator.record.end.dhall

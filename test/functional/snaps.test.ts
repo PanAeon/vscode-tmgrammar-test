@@ -32,7 +32,8 @@ describe('snap test', () => {
     .catch(({stdout, stderr}) => {
         // fs.writeFileSync('stderr.txt', stderr)
         //  fs.writeFileSync('stdout.txt', stdout)
-      expect(stdout).to.eq(fs.readFileSync(`${__dirname}/resources/snap-simple-failure/stdout.txt`).toString())
+      expect(stdout).to.eq(
+        fs.readFileSync(`${__dirname}/resources/snap-simple-failure/stdout.txt`).toString().replace(/<root>/, root))
     })
   })
 

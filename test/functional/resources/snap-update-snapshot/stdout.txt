@@ -1,4 +1,4 @@
-ERROR in test case /home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/snap-simple-failure/simple.dhall
+ERROR in test case <root>/test/functional/resources/snap-simple-failure/simple.dhall
     -- existing snapshot
     ++ new changes
 

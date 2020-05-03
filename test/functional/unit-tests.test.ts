@@ -32,7 +32,8 @@ describe('unit test', () => {
     .catch(({stdout, stderr}) => {
        // fs.writeFileSync('stderr.txt', stderr)
         // fs.writeFileSync('stdout.text', stdout)
-      expect(stdout).to.eq(fs.readFileSync(`${__dirname}/resources/unit-report-unexpected-scopes/stdout.txt`).toString())
+      expect(stdout).to.deep.equal
+        (fs.readFileSync(`${__dirname}/resources/unit-report-unexpected-scopes/stdout.txt`).toString().replace(/<root>/g, root))
     })
 
 

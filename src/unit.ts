@@ -101,7 +101,7 @@ function displayTestResultFull(filename: string, testCase: GrammarTestCase, fail
         console.log(chalk.red(symbols.err + " " + filename + " failed"))
         failures.forEach(failure => {
             const {l,s,e} = getCorrectedOffsets(failure)
-            console.log(Padding + "at [" + chalk.whiteBright(`${filename}:${l}:${s}:${e}`) + "]: ")
+            console.log(Padding + "at [" + chalk.whiteBright(`${filename}:${l}:${s}:${e}`) + "]:")
             printSourceLine(testCase, failure);
             printReason(testCase, failure);
 
