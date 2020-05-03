@@ -1,8 +1,9 @@
 'use strict';
 import { expect } from 'chai'
 
-import { missingScopes_ } from '../../src/unit/index'
+import { missingScopes_ } from '../../../src/unit/index'
 
+// FIXME: move somewhere..
 describe('scopesEqual_', () => {
     it('should return [] on two empty arrays', () => {
         expect(missingScopes_([],[])).to.eql([]);

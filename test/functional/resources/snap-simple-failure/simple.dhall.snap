@@ -1,0 +1,79 @@
+>
+>
+>
+>{- Don't repeat yourself!
+#^^ source.dhall comment.block.dhall
+#  ^^^^^^^^^^^^^^^^^^^^^^^^ source.dhall comment.block.dhall
+>
+>   Repetition is error-prone
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.dhall comment.block.dhall
+>-}
+#^^ source.dhall comment.block.dhall
+>
+>-- comment
+#^^ source.dhall comment.line.double-dash.dhall
+#  ^^^^^^^^ source.dhall comment.line.double-dash.dhall
+>let user = "bill"
+#^^^ source.dhall meta.declaration.expression.let.dhall keyword.other.let.dhall
+#   ^ source.dhall
+#    ^^^^ source.dhall meta.declaration.expression.let.dhall variable.other.constant.dhall
+#        ^ source.dhall meta.declaration.expression.let.dhall
+#         ^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall keyword.operator.assignment.dhall
+#          ^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall
+#           ^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall string.quoted.double.dhall
+#            ^^^^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall string.quoted.double.dhall
+#                ^ source.dhall meta.declaration.expression.let.dhall meta.declaration.foobar.dhall string.quoted.double.dhall
+>in  { home       = "/home/${user}"
+#^^ source.dhall keyword.control.dhall
+#  ^^ source.dhall
+#    ^ source.dhall meta.declaration.data.record.block.dhall keyword.operator.record.begin.dhall
+#     ^ source.dhall meta.declaration.data.record.block.dhall
+#      ^^^^ source.dhall meta.declaration.data.record.block.dhall variable.object.property.dhall
+#          ^^^^^^^ source.dhall
+#                 ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall punctuation.separator.dictionary.key-value.dhall
+#                  ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall
+#                   ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                    ^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                          ^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
+#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
+#                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
+#                                 ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+>    , privateKey = "/home/${user}/id_ed25519"
+#^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall
+#    ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall punctuation.separator.dictionary.pair.dhall
+#     ^ source.dhall meta.declaration.data.record.block.dhall
+#      ^^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall variable.object.property.dhall
+#                ^ source.dhall meta.declaration.data.record.block.dhall
+#                 ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall punctuation.separator.dictionary.key-value.dhall
+#                  ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall
+#                   ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                    ^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                          ^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
+#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
+#                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
+#                                 ^^^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                                            ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+>    , publicKey  = "/home/${user}/id_ed25519.pub"
+#^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall
+#    ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall punctuation.separator.dictionary.pair.dhall
+#     ^ source.dhall meta.declaration.data.record.block.dhall extra.scope.dhall
+#      ^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall variable.object.property.dhall
+#               ^^ source.dhall meta.declaration.data.record.block.dhall
+#                 ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall punctuation.separator.dictionary.key-value.dhall
+#                  ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall
+#                   ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                    ^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                          ^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.begin.dhall
+#                            ^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall meta.label.dhall
+#                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall constant.other.placeholder.dhall punctuation.section.curly.end.dhall
+#                                 ^^^^^^^^^^^^^^^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+#                                                ^ source.dhall meta.declaration.data.record.block.dhall meta.declaration.data.record.literal.dhall string.quoted.double.dhall
+>}
+#^ source.dhall meta.declaration.data.record.block.dhall keyword.operator.record.end.dhall
+>
+>
+>
+>
+>
+>
+>

@@ -10,3 +10,4 @@
 /shell.nix
 /dist/test
 /*.tgz
+/coverage

@@ -121,11 +121,6 @@ glob(program.testcases, (err, files0) => {
 
 });
 
-function testFailed(): Promise<number> {
-    return new Promise((resolve, reject) => { resolve(TestFailed); });
-}
-
-
 function renderTestResult(filename: string, expected: AnnotatedLine[], actual: AnnotatedLine[]): number {
 
 
@@ -148,12 +143,6 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
     // for both actual end expected
     let actual1 = actual.filter(a => a.src.trim().length > 0);
     let expected1 = expected.filter(a => a.src.trim().length > 0);
-
-    // console.log(inspect(expected, false, 5, true))
-    //     console.log(" ")
-    //     console.log(" ")
-    //     console.log(inspect(actual, false, 5, true))
-    //     process.exit(-1)
 
     const wrongLines = flatten(expected1.map((exp, i) => {
         const act = actual1[i];

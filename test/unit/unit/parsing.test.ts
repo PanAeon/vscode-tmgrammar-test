@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import * as fs from 'fs'
 
 
-import { parseHeader, parseScopeAssertion, parseGrammarTestCase } from '../../src/unit/parsing';
+import { parseHeader, parseScopeAssertion, parseGrammarTestCase } from '../../../src/unit/parsing';
 
 describe('parseHeader', () => {
     it('should parse one character comment token', () => {
@@ -12,15 +12,30 @@ describe('parseHeader', () => {
         expect(result).to.eql({
             commentToken: "#",
             description: "",
-            scope: "scala"
+            scope: "scala",
+            allowMiddleLineAssertions: false
         });
     });
+
+    it('should parse +AllowMiddleLineAssertions flag', () => {
+        var result = parseHeader(['# SYNTAX TEST "scala" +AllowMiddleLineAssertions'
+            , '#']);
+        expect(result).to.eql({
+            commentToken: "#",
+            description: "",
+            scope: "scala",
+            allowMiddleLineAssertions: true
+        });
+    });
+
     it('should parse description', () => {
         var result = parseHeader(['-- SYNTAX TEST "sql" "some description"']);
         expect(result).to.eql({
             commentToken: "--",
             description: "some description",
-            scope: "sql"
+            scope: "sql",
+            allowMiddleLineAssertions: false
+
         });
     });
     it('should throw meaningful error msg', () => {
@@ -212,7 +227,9 @@ const parserTestDhallExpectedResult = {
     {
         commentToken: '--',
         description: '',
-        scope: 'source.dhall'
+        scope: 'source.dhall',
+        allowMiddleLineAssertions: false
+
     },
     source:
         ['',

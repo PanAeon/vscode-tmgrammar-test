@@ -3,7 +3,7 @@ import { ScopeAssertion, TestCaseMetadata, LineAssertion, GrammarTestCase } from
 import { EOL } from 'os'
 // import { start } from 'repl';
 
-const leftArrowAssertRegex = /^\s*<([~]*)([-]+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
+const leftArrowAssertRegex = /^(\s*)<([~]*)([-]+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
 const upArrowAssertRegex = /^\s*((?:(?:\^+)\s*)+)((?:\s*\w[-\w.]*)*)(?:\s*-)?((?:\s*\w[-\w.]*)*)\s*$/
 
 
@@ -42,7 +42,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
     let leftArrowMatch = leftArrowAssertRegex.exec(s)
 
     if (leftArrowMatch !== null) {
-        let [_, tildas, dashes, scopes = "", exclusions = ""] = leftArrowMatch
+        let [, , tildas, dashes, scopes = "", exclusions = ""] = leftArrowMatch
         if (scopes === "" && exclusions === "") {
             throw new Error(`Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`)
         } else {
@@ -62,13 +62,13 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
 
 
 let headerErrorMessage = `Expecting the first line in the syntax test file to be in the following format:${EOL}` +
-    `<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?${EOL}`
+    `<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?(+AllowMiddleLineAssertions)?${EOL}`
 
-let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*$/
+let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*(\+AllowMiddleLineAssertions)?\s*$/
 
 /*
   parse the first line with the format:
-  <comment character(s)> SYNTAX TEST "<language identifier>" <"description">?
+  <comment character(s)> SYNTAX TEST "<language identifier>" <"description">? ([+-]<flag>)*
 */
 
 export function parseHeader(as: string[]): TestCaseMetadata {
@@ -79,12 +79,13 @@ export function parseHeader(as: string[]): TestCaseMetadata {
     if (matchResult === null) {
         throw new Error(headerErrorMessage);
     } else {
-        let [_, commentToken, scope, description = ""] = matchResult;
+        let [, commentToken, scope, description = "", allowMiddleLineAssertions = ""] = matchResult;
 
         return <TestCaseMetadata>{
             commentToken: commentToken,
             scope: scope,
-            description: description
+            description: description,
+            allowMiddleLineAssertions: allowMiddleLineAssertions !== ""
         }
     }
 
@@ -94,7 +95,7 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
     let headerLength = 1;
     let lines = str.split(/\r\n|\n/);
     let metadata = parseHeader(lines)
-    let { commentToken } = metadata
+    let { commentToken, allowMiddleLineAssertions } = metadata
     let rest = lines.slice(headerLength)
 
     function emptyLineAssertion(tcLineNumber: number, srcLineNumber: number): LineAssertion {
@@ -112,8 +113,17 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
     let source = <Array<string>>[]
     rest.forEach((s: string, i: number) => {
         let tcLineNumber = headerLength + i;
+        
+        if (allowMiddleLineAssertions && s.trim().startsWith(commentToken)) {
+            const indent = s.indexOf(commentToken) + commentToken.length // FIXME: a bit ugly here
+            let as = parseScopeAssertion(tcLineNumber, indent, s)
+            currentLineAssertion.scopeAssertions = [...currentLineAssertion.scopeAssertions, ...as]
 
-        if (s.startsWith(commentToken)) {
+            // if (!skipComments) {
+            //     source.push(s)
+            //     sourceLineNumber++;
+            // }
+        } else if (s.startsWith(commentToken)) {
             let as = parseScopeAssertion(tcLineNumber, commentToken.length, s)
             currentLineAssertion.scopeAssertions = [...currentLineAssertion.scopeAssertions, ...as]
 

@@ -1,11 +1,11 @@
 // import _ from "lodash";
 import * as fs from 'fs';
-import { inspect } from 'util';
+//import { inspect } from 'util';
 
 import * as tm from 'vscode-textmate';
 import { GrammarTestCase, TestFailure } from './model';
 import { parseGrammarTestCase } from './parsing';
-import { basename } from 'path';
+//import { basename } from 'path';
 
 export {parseGrammarTestCase, GrammarTestCase, TestFailure, missingScopes_}
 

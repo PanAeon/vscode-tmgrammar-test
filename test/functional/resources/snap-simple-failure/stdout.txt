@@ -1,0 +1,14 @@
+ERROR in test case /home/vitalii/lab/vscode-tmgrammar-test/test/functional/resources/snap-simple-failure/simple.dhall
+    -- existing snapshot
+    ++ new changes
+
+  5: let user = "bill"
+        ^ meta.declaration.expression.let.dhall
+
+  6: in  { home       = "/home/${user}"
+               ^^^^^^^ meta.declaration.data.record.block.dhall
+
+  8:     , publicKey  = "/home/${user}/id_ed25519.pub"
+          ^ extra.scope.dhall
+
+
