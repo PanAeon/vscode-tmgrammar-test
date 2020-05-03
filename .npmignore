@@ -11,3 +11,4 @@
 /dist/test
 /*.tgz
 /coverage
+.nyc_output
