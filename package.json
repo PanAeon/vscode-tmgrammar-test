@@ -14,8 +14,10 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "test": "mocha -r ts-node/register 'test/**/*.test.ts'",
-    "coverage": "npx nyc --reporter=html mocha -r ts-node/register 'test/**/*.test.ts'"
+    "coverage": "npx nyc --reporter=html mocha -r ts-node/register 'test/**/*.test.ts'",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "test": "mocha -r ts-node/register 'test/**/*.test.ts'"
   },
   "bin": {
     "vscode-tmgrammar-test": "./dist/src/unit.js",
@@ -42,6 +44,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^6.2.3",
     "nyc": "^15.0.1",
+    "prettier": "^2.1.2",
     "ts-node": "^8.10.2",
     "tslint": "^5.20.1",
     "typescript": "^3.8.3"
