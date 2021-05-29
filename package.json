@@ -54,6 +54,7 @@
     "commander": "^2.20.3",
     "diff": "^4.0.2",
     "glob": "^7.1.6",
-    "vscode-textmate": "^4.1.1"
+    "vscode-oniguruma": "^1.5.1",
+    "vscode-textmate": "^5.4.0"
   }
 }
