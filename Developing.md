@@ -3,7 +3,7 @@
 Any contributions are really appreciated! :) Just make sure that all existing tests work, or if they have changed the
 change is meaningful.
 
-0. `node run build`
+0. `npm run build`
 1. `npm run test`
 
 2. Manually:

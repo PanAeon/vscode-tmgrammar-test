@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as tm from 'vscode-textmate';
+import * as oniguruma from 'vscode-oniguruma';
 import { GrammarTestCase, TestFailure } from './model';
 import { parseGrammarTestCase } from './parsing';
 
@@ -86,7 +87,16 @@ export function createRegistryFromGrammars(
     grammarIndex[rawGrammar.scopeName] = rawGrammar;
   }
 
+  const wasmBin = fs.readFileSync('./node_modules/vscode-oniguruma/release/onig.wasm').buffer;
+  const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin).then(() => {
+      return {
+          createOnigScanner(patterns: any) { return new oniguruma.OnigScanner(patterns); },
+          createOnigString(s: any) { return new oniguruma.OnigString(s); }
+      };
+  });
+
   return new tm.Registry(<tm.RegistryOptions>{
+    onigLib: vscodeOnigurumaLib,
     loadGrammar: (scopeName) => {
       if (grammarIndex[scopeName] !== undefined) {
         return new Promise((fulfill, _) => {
