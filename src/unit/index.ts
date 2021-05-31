@@ -87,7 +87,8 @@ export function createRegistryFromGrammars(
     grammarIndex[rawGrammar.scopeName] = rawGrammar;
   }
 
-  const wasmBin = fs.readFileSync('./node_modules/vscode-oniguruma/release/onig.wasm').buffer;
+  const wasmPath =  require.resolve('vscode-oniguruma').replace(/main\.js$/, 'onig.wasm')
+  const wasmBin = fs.readFileSync(wasmPath).buffer;
   const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin).then(() => {
       return {
           createOnigScanner(patterns: any) { return new oniguruma.OnigScanner(patterns); },
