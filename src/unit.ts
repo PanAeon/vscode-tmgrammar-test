@@ -36,6 +36,10 @@ program
     'A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!'
   )
   .option(
+    '-v, --validate',
+    'Validate the grammar file for well-formedness and pattern validity instead of running testcases.'
+  )
+  .option(
     '-c, --compact',
     'Display output in the compact format, which is easier to use with VSCode problem matchers'
   )
@@ -45,7 +49,10 @@ if (
   program.scope === undefined ||
   program.grammar === undefined ||
   program.grammar.length === 0 ||
-  program.testcases === undefined
+  (
+    program.testcases === undefined &&
+    program.validate === undefined
+  )
 ) {
   program.help();
 }
@@ -77,6 +84,10 @@ const TestSuccessful = 0;
 const Padding = '  ';
 
 const registry = createRegistry(program.grammar);
+
+if (program.validate && !!registry && typeof registry === 'object') {
+  process.exit(0);
+}
 
 function printSourceLine(testCase: GrammarTestCase, failure: TestFailure) {
   const line = testCase.source[failure.srcLine];
