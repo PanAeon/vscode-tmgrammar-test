@@ -85,8 +85,12 @@ const Padding = '  ';
 
 const registry = createRegistry(program.grammar);
 
-if (program.validate && !!registry && typeof registry === 'object') {
-  process.exit(0);
+if (program.validate) {
+  if (!!registry && typeof registry === 'object') {
+    process.exit(0);
+  } else {
+    process.exit(1);
+  }
 }
 
 function printSourceLine(testCase: GrammarTestCase, failure: TestFailure) {
