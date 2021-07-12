@@ -128,6 +128,7 @@ Options:
   -s, --scope <scope>      Language scope, e.g. source.dhall
   -g, --grammar <grammar>  Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed. (default: [])
   -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
+  -v, --validate           Validate the grammar file for well-formedness and pattern validity instead of running testcases.
   -c, --compact            Display output in the compact format, which is easier to use with VSCode problem matchers
   -h, --help               output usage information
 ```
