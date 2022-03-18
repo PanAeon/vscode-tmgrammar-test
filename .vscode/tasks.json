@@ -27,7 +27,6 @@
                         "column": 4,
                         "endColumn": 5,
                         "message": 6
-                        
                     }
                 ]
             }
@@ -35,6 +34,18 @@
         {
             "type": "npm",
             "script": "build",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "label": "test",
+            "type": "npm",
+            "script": "test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "problemMatcher": [
                 "$tsc"
             ]
