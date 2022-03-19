@@ -2,6 +2,7 @@ import child_process from 'child_process';
 import { expect } from 'chai';
 import fs from 'fs';
 import util from 'util';
+import { normalize } from '../helpers.test';
 
 const exec = util.promisify(child_process.exec);
 
@@ -9,18 +10,20 @@ const exec = util.promisify(child_process.exec);
 describe('snap test', () => {
   const root = process.cwd();
 
-  it('should report OK for test without errors', () => {
+  it('should report OK for test without errors', async () => {
     return exec(
-      `node ${root}/dist/src/snapshot.js \\
-      --scope source.dhall \\
-      --grammar ${root}/test/resources/dhall.tmLanguage.json \\
-      -t ${__dirname}/resources/snap-ok-scenario/simple.dhall`,
+      `node ${root}/dist/src/snapshot.js ` +
+      `--scope source.dhall ` +
+      `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
+      `-t ${__dirname}/resources/snap-ok-scenario/simple.dhall`,
       {
         cwd: root
       }
     ).then(({ stdout, stderr }) => {
-      expect(stdout).to.eq(
-        `✓ ${root}/test/functional/resources/snap-ok-scenario/simple.dhall run successfully.\n`
+      expect(
+        normalize(stdout)
+      ).to.eq(
+        normalize(`✓ ${root}/test/functional/resources/snap-ok-scenario/simple.dhall run successfully.`)
       );
       expect(stderr).to.eq('');
     });
@@ -28,10 +31,10 @@ describe('snap test', () => {
 
   it('should report wrong or missing scopes', () => {
     return exec(
-      `node ${root}/dist/src/snapshot.js  \\
-      --scope source.dhall \\
-      --grammar ${root}/test/resources/dhall.tmLanguage.json \\
-      -t ${__dirname}/resources/snap-simple-failure/simple.dhall`,
+      `node ${root}/dist/src/snapshot.js ` +
+      `--scope source.dhall ` +
+      `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
+      `-t ${__dirname}/resources/snap-simple-failure/simple.dhall`,
       {
         cwd: root
       }
@@ -42,13 +45,17 @@ describe('snap test', () => {
       .catch(({ stdout, stderr }) => {
         // fs.writeFileSync('stderr.txt', stderr)
         //  fs.writeFileSync('stdout.txt', stdout)
-        expect(stdout).to.eq(
-          fs
-            .readFileSync(
-              `${__dirname}/resources/snap-simple-failure/stdout.txt`
-            )
-            .toString()
-            .replace(/<root>/, root)
+        expect(
+          normalize(stdout)
+        ).to.eq(
+          normalize(
+            fs
+              .readFileSync(
+                `${__dirname}/resources/snap-simple-failure/stdout.txt`
+              )
+              .toString()
+              .replace(/<root>/, root)
+          )
         );
       });
   });
@@ -59,27 +66,29 @@ describe('snap test', () => {
       `${__dirname}/resources/snap-update-snapshot/simple.dhall.snap`
     );
     await exec(
-      `node ${root}/dist/src/snapshot.js  \\
-      --scope source.dhall \\
-      --grammar ${root}/test/resources/dhall.tmLanguage.json \\
-      -t ${__dirname}/resources/snap-update-snapshot/simple.dhall \\
-      --updateSnapshot`,
+      `node ${root}/dist/src/snapshot.js ` +
+      `--scope source.dhall ` +
+      `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
+      `-t ${__dirname}/resources/snap-update-snapshot/simple.dhall ` +
+      `--updateSnapshot`,
       {
         cwd: root
       }
     );
 
     await exec(
-      `node ${root}/dist/src/snapshot.js  \\
-      --scope source.dhall \\
-      --grammar ${root}/test/resources/dhall.tmLanguage.json \\
-      -t ${__dirname}/resources/snap-update-snapshot/simple.dhall`,
+      `node ${root}/dist/src/snapshot.js ` +
+      `--scope source.dhall `+
+      `--grammar ${root}/test/resources/dhall.tmLanguage.json `+
+      `-t ${__dirname}/resources/snap-update-snapshot/simple.dhall`,
       {
         cwd: root
       }
     ).then(({ stdout, stderr }) => {
-      expect(stdout).to.eq(
-        `✓ ${root}/test/functional/resources/snap-update-snapshot/simple.dhall run successfully.\n`
+      expect(
+        normalize(stdout)
+      ).to.eq(
+        normalize(`✓ ${root}/test/functional/resources/snap-update-snapshot/simple.dhall run successfully.\n`)
       );
       expect(stderr).to.eq('');
     });
