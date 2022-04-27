@@ -41,7 +41,6 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.37",
     "chai": "^4.2.0",
-    "istanbul": "^0.4.5",
     "mocha": "^6.2.3",
     "nyc": "^15.0.1",
     "prettier": "^2.1.2",
@@ -55,6 +54,6 @@
     "diff": "^4.0.2",
     "glob": "^7.1.6",
     "vscode-oniguruma": "^1.5.1",
-    "vscode-textmate": "^5.4.0"
+    "vscode-textmate": "^7.0.1"
   }
 }
