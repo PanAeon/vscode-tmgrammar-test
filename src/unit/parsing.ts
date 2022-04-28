@@ -14,7 +14,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
 
       if (scopes === '' && exclusions === '') {
         throw new Error(
-          `Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`
+          `Invalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`
         )
       } else {
         const result = []
@@ -35,7 +35,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
         return result
       }
     } else {
-      throw new Error(`Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL}`)
+      throw new Error(`Invalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL}`)
     }
   }
 
@@ -45,7 +45,7 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
     let [, , tildas, dashes, scopes = '', exclusions = ''] = leftArrowMatch
     if (scopes === '' && exclusions === '') {
       throw new Error(
-        `Inalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`
+        `Invalid assertion at line ${testCaseLineNumber}:${EOL}${as}${EOL} Missing both required and prohibited scopes`
       )
     } else {
       return [
@@ -97,6 +97,7 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
   let metadata = parseHeader(lines)
   let { commentToken } = metadata
   let rest = lines.slice(headerLength)
+  
 
   function emptyLineAssertion(tcLineNumber: number, srcLineNumber: number): LineAssertion {
     return <LineAssertion>{

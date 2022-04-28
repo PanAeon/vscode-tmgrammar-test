@@ -164,12 +164,12 @@ describe('parseScopeAssertion', () => {
   })
   it('should throw an error for an empty <- ', () => {
     expect(() => parseScopeAssertion(0, 1, '#<-- - ')).to.throw(
-      `Inalid assertion at line 0:${EOL}` + `#<-- - ${EOL}` + ` Missing both required and prohibited scopes`
+      `Invalid assertion at line 0:${EOL}` + `#<-- - ${EOL}` + ` Missing both required and prohibited scopes`
     )
   })
   it('should throw an error on empty ^ ', () => {
     expect(() => parseScopeAssertion(0, 1, '# ^^^ ')).to.throw(
-      `Inalid assertion at line 0:${EOL}` + `# ^^^ ${EOL}` + ` Missing both required and prohibited scopes`
+      `Invalid assertion at line 0:${EOL}` + `# ^^^ ${EOL}` + ` Missing both required and prohibited scopes`
     )
   })
 })
