@@ -1,43 +1,38 @@
-'use strict';
-import { expect } from 'chai';
-import * as fs from 'fs';
+'use strict'
+import { expect } from 'chai'
+import * as fs from 'fs'
 
-import {
-  parseGrammarTestCase,
-  runGrammarTestCase,
-  createRegistry
-} from '../../src/unit/index';
+import { parseGrammarTestCase, runGrammarTestCase } from '../../src/unit/index'
+import { createRegistry } from '../../src/common/index'
 
-var registry = createRegistry(['./test/resources/dhall.tmLanguage.json']);
+var registry = createRegistry([
+  {
+    scopeName: 'source.dhall',
+    path: './test/resources/dhall.tmLanguage.json'
+  }
+])
 
 function loadFile(filename: string): string {
-  return fs.readFileSync(filename).toString();
+  return fs.readFileSync(filename).toString()
 }
 
 describe('Grammar test case', () => {
   it('should report no errors on correct grammar test', () => {
-    return runGrammarTestCase(
-      registry,
-      parseGrammarTestCase(loadFile('./test/resources/successful.test.dhall'))
-    ).then((result) => {
-      expect(result).to.eql([]);
-    });
-  });
+    return runGrammarTestCase(registry, parseGrammarTestCase(loadFile('./test/resources/successful.test.dhall'))).then(
+      (result) => {
+        expect(result).to.eql([])
+      }
+    )
+  })
   it('should report missing scopes', () => {
     return runGrammarTestCase(
       registry,
-      parseGrammarTestCase(
-        loadFile('./test/resources/missing.scopes.test.dhall')
-      )
+      parseGrammarTestCase(loadFile('./test/resources/missing.scopes.test.dhall'))
     ).then((result) => {
       expect(result).to.eql([
         {
           missing: ['m1', 'keyword.operator.record.begin.dhall', 'm2.foo'],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'keyword.operator.record.begin.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.begin.dhall'],
           unexpected: [],
           line: 11,
           srcLine: 9,
@@ -46,11 +41,7 @@ describe('Grammar test case', () => {
         },
         {
           missing: ['m3.foo', 'variable.object.property.dhall'],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'variable.object.property.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'variable.object.property.dhall'],
           unexpected: [],
           line: 13,
           srcLine: 10,
@@ -177,35 +168,25 @@ describe('Grammar test case', () => {
         },
         {
           missing: ['m6.foo'],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'keyword.operator.record.end.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           unexpected: [],
           line: 20,
           srcLine: 12,
           start: 0,
           end: 1
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
   it('should report unexpected scopes', () => {
     return runGrammarTestCase(
       registry,
-      parseGrammarTestCase(
-        loadFile('./test/resources/unexpected.scopes.test.dhall')
-      )
+      parseGrammarTestCase(loadFile('./test/resources/unexpected.scopes.test.dhall'))
     ).then((result) => {
       expect(result).to.eql([
         {
           missing: [],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'keyword.operator.record.begin.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.begin.dhall'],
           unexpected: ['source.dhall'],
           line: 11,
           srcLine: 9,
@@ -214,11 +195,7 @@ describe('Grammar test case', () => {
         },
         {
           missing: [],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'variable.object.property.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'variable.object.property.dhall'],
           unexpected: ['variable.object.property.dhall', 'source.dhall'],
           line: 13,
           srcLine: 10,
@@ -347,29 +324,20 @@ describe('Grammar test case', () => {
         },
         {
           missing: [],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'keyword.operator.record.end.dhall'
-          ],
-          unexpected: [
-            'meta.declaration.data.record.block.dhall',
-            'keyword.operator.record.end.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
+          unexpected: ['meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           line: 20,
           srcLine: 12,
           start: 0,
           end: 1
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
   it('should report out of place scopes', () => {
     return runGrammarTestCase(
       registry,
-      parseGrammarTestCase(
-        loadFile('./test/resources/misplaced.scopes.test.dhall')
-      )
+      parseGrammarTestCase(loadFile('./test/resources/misplaced.scopes.test.dhall'))
     ).then((result) => {
       expect(result).to.eql([
         {
@@ -492,26 +460,20 @@ describe('Grammar test case', () => {
         },
         {
           missing: ['meta.declaration.data.record.block.dhall'],
-          actual: [
-            'source.dhall',
-            'meta.declaration.data.record.block.dhall',
-            'keyword.operator.record.end.dhall'
-          ],
+          actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           unexpected: [],
           line: 20,
           srcLine: 12,
           start: 0,
           end: 1
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
   it('should report error when line assertion referes to non existing token', () => {
     return runGrammarTestCase(
       registry,
-      parseGrammarTestCase(
-        loadFile('./test/resources/out.of.bounds.test.dhall')
-      )
+      parseGrammarTestCase(loadFile('./test/resources/out.of.bounds.test.dhall'))
     ).then((result) => {
       expect(result).to.eql([
         {
@@ -523,7 +485,7 @@ describe('Grammar test case', () => {
           start: 30,
           unexpected: []
         }
-      ]);
-    });
-  });
-});
+      ])
+    })
+  })
+})

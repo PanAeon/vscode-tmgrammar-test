@@ -1,6 +1,6 @@
 {
   "name": "vscode-tmgrammar-test",
-  "version": "0.0.11",
+  "version": "0.1.1-snapshot",
   "description": "Test helper for VSCode textmate grammars",
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "commander": "^2.20.3",
+    "commander": "^9.2.0",
     "diff": "^4.0.2",
     "glob": "^7.1.6",
     "vscode-oniguruma": "^1.5.1",
