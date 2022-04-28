@@ -11,18 +11,7 @@ describe('parseHeader', () => {
     expect(result).to.eql({
       commentToken: '#',
       description: '',
-      scope: 'scala',
-      allowMiddleLineAssertions: false
-    })
-  })
-
-  it('should parse +AllowMiddleLineAssertions flag', () => {
-    var result = parseHeader(['# SYNTAX TEST "scala" +AllowMiddleLineAssertions', '#'])
-    expect(result).to.eql({
-      commentToken: '#',
-      description: '',
-      scope: 'scala',
-      allowMiddleLineAssertions: true
+      scope: 'scala'
     })
   })
 
@@ -31,8 +20,7 @@ describe('parseHeader', () => {
     expect(result).to.eql({
       commentToken: '--',
       description: 'some description',
-      scope: 'sql',
-      allowMiddleLineAssertions: false
+      scope: 'sql'
     })
   })
   it('should throw meaningful error msg', () => {
@@ -203,8 +191,7 @@ const parserTestDhallExpectedResult = {
   metadata: {
     commentToken: '--',
     description: '',
-    scope: 'source.dhall',
-    allowMiddleLineAssertions: false
+    scope: 'source.dhall'
   },
   source: [
     '',

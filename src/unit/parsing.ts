@@ -64,9 +64,9 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
 
 let headerErrorMessage =
   `Expecting the first line in the syntax test file to be in the following format:${EOL}` +
-  `<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?(+AllowMiddleLineAssertions)?${EOL}`
+  `<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?${EOL}`
 
-let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*(\+AllowMiddleLineAssertions)?\s*$/
+let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*$/
 
 /**
  * parse the first line with the format:
@@ -82,12 +82,11 @@ export function parseHeader(as: string[]): TestCaseMetadata {
   if (matchResult === null) {
     throw new Error(headerErrorMessage)
   } else {
-    let [, commentToken, scope, description = '', allowMiddleLineAssertions = ''] = matchResult
+    let [, commentToken, scope, description = ''] = matchResult
     return <TestCaseMetadata>{
       commentToken: commentToken,
       scope: scope,
-      description: description,
-      allowMiddleLineAssertions: allowMiddleLineAssertions !== ''
+      description: description
     }
   }
 }
@@ -96,7 +95,7 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
   let headerLength = 1
   let lines = str.split(/\r\n|\n/)
   let metadata = parseHeader(lines)
-  let { commentToken, allowMiddleLineAssertions } = metadata
+  let { commentToken } = metadata
   let rest = lines.slice(headerLength)
 
   function emptyLineAssertion(tcLineNumber: number, srcLineNumber: number): LineAssertion {
@@ -114,11 +113,7 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
   rest.forEach((s: string, i: number) => {
     let tcLineNumber = headerLength + i
 
-    if (allowMiddleLineAssertions && s.trim().startsWith(commentToken)) {
-      const indent = s.indexOf(commentToken) + commentToken.length
-      let as = parseScopeAssertion(tcLineNumber, indent, s)
-      currentLineAssertion.scopeAssertions = [...currentLineAssertion.scopeAssertions, ...as]
-    } else if (s.startsWith(commentToken)) {
+    if (s.startsWith(commentToken)) {
       let as = parseScopeAssertion(tcLineNumber, commentToken.length, s)
       currentLineAssertion.scopeAssertions = [...currentLineAssertion.scopeAssertions, ...as]
     } else {
