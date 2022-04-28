@@ -35,7 +35,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.begin.dhall'],
           unexpected: [],
           line: 11,
-          srcLine: 9,
+          srcLine: 10,
           start: 4,
           end: 5
         },
@@ -44,7 +44,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'variable.object.property.dhall'],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 6,
           end: 16
         },
@@ -58,7 +58,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 17,
           end: 18
         },
@@ -72,7 +72,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 19,
           end: 20
         },
@@ -86,7 +86,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 20,
           end: 26
         },
@@ -102,7 +102,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 26,
           end: 28
         },
@@ -118,7 +118,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 28,
           end: 32
         },
@@ -134,7 +134,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 32,
           end: 33
         },
@@ -148,7 +148,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 33,
           end: 44
         },
@@ -162,7 +162,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 44,
           end: 45
         },
@@ -171,7 +171,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           unexpected: [],
           line: 20,
-          srcLine: 12,
+          srcLine: 13,
           start: 0,
           end: 1
         }
@@ -189,7 +189,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.begin.dhall'],
           unexpected: ['source.dhall'],
           line: 11,
-          srcLine: 9,
+          srcLine: 10,
           start: 4,
           end: 5
         },
@@ -198,7 +198,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'variable.object.property.dhall'],
           unexpected: ['variable.object.property.dhall', 'source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 6,
           end: 16
         },
@@ -212,7 +212,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 19,
           end: 20
         },
@@ -226,7 +226,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 20,
           end: 26
         },
@@ -242,7 +242,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 26,
           end: 28
         },
@@ -258,7 +258,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 28,
           end: 32
         },
@@ -274,7 +274,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 32,
           end: 33
         },
@@ -288,7 +288,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 33,
           end: 44
         },
@@ -302,7 +302,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['source.dhall'],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 44,
           end: 45
         },
@@ -318,7 +318,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: ['meta.label.dhall'],
           line: 17,
-          srcLine: 11,
+          srcLine: 12,
           start: 28,
           end: 32
         },
@@ -327,7 +327,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           unexpected: ['meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           line: 20,
-          srcLine: 12,
+          srcLine: 13,
           start: 0,
           end: 1
         }
@@ -350,7 +350,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 17,
           end: 18
         },
@@ -364,7 +364,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 19,
           end: 20
         },
@@ -378,7 +378,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 20,
           end: 26
         },
@@ -394,7 +394,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 26,
           end: 28
         },
@@ -410,7 +410,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 28,
           end: 32
         },
@@ -426,7 +426,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 32,
           end: 33
         },
@@ -440,7 +440,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 33,
           end: 44
         },
@@ -454,7 +454,7 @@ describe('Grammar test case', () => {
           ],
           unexpected: [],
           line: 13,
-          srcLine: 10,
+          srcLine: 11,
           start: 44,
           end: 45
         },
@@ -463,7 +463,7 @@ describe('Grammar test case', () => {
           actual: ['source.dhall', 'meta.declaration.data.record.block.dhall', 'keyword.operator.record.end.dhall'],
           unexpected: [],
           line: 20,
-          srcLine: 12,
+          srcLine: 13,
           start: 0,
           end: 1
         }
@@ -481,7 +481,7 @@ describe('Grammar test case', () => {
           line: 5,
           actual: [],
           missing: ['missing.scope'],
-          srcLine: 3,
+          srcLine: 4,
           start: 30,
           unexpected: []
         }

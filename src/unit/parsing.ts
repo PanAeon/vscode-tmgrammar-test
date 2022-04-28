@@ -97,7 +97,11 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
   let metadata = parseHeader(lines)
   let { commentToken } = metadata
   let rest = lines.slice(headerLength)
-  
+  let commentTokenLength = commentToken.length
+
+  function isLineAssertion(s:string):boolean {
+    return s.startsWith(commentToken) && /^\s*(\^|<[~]*[-]+)/.test(s.substring(commentTokenLength))
+  }
 
   function emptyLineAssertion(tcLineNumber: number, srcLineNumber: number): LineAssertion {
     return <LineAssertion>{
@@ -114,7 +118,7 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
   rest.forEach((s: string, i: number) => {
     let tcLineNumber = headerLength + i
 
-    if (s.startsWith(commentToken)) {
+    if (s.startsWith(commentToken) && isLineAssertion(s)) {
       let as = parseScopeAssertion(tcLineNumber, commentToken.length, s)
       currentLineAssertion.scopeAssertions = [...currentLineAssertion.scopeAssertions, ...as]
     } else {

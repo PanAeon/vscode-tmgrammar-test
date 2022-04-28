@@ -194,6 +194,7 @@ const parserTestDhallExpectedResult = {
     scope: 'source.dhall'
   },
   source: [
+    '-- simple test',
     '',
     '',
     "{- Don't repeat yourself!",
@@ -216,7 +217,7 @@ const parserTestDhallExpectedResult = {
   assertions: [
     {
       testCaseLineNumber: 11,
-      sourceLineNumber: 9,
+      sourceLineNumber: 10,
       scopeAssertions: [
         {
           from: 4,
@@ -228,7 +229,7 @@ const parserTestDhallExpectedResult = {
     },
     {
       testCaseLineNumber: 13,
-      sourceLineNumber: 10,
+      sourceLineNumber: 11,
       scopeAssertions: [
         {
           from: 6,
@@ -257,7 +258,7 @@ const parserTestDhallExpectedResult = {
     },
     {
       testCaseLineNumber: 17,
-      sourceLineNumber: 11,
+      sourceLineNumber: 12,
       scopeAssertions: [
         {
           from: 26,
@@ -275,7 +276,7 @@ const parserTestDhallExpectedResult = {
     },
     {
       testCaseLineNumber: 20,
-      sourceLineNumber: 12,
+      sourceLineNumber: 13,
       scopeAssertions: [
         {
           from: 0,
