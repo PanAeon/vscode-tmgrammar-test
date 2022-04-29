@@ -70,10 +70,13 @@ x=5
 //  you specify offset from start by using '~' character, just in case
 ```
 
-* Ensure that tokens **don't** have undesired scopes by using&nbsp;&nbsp; `- scopes`&nbsp;:
+* To ensure that tokens **don't** have undesired scopes put `-` symbol before them:
 ```scala
-   // ensure comment start with two double slashes
-  ^ - comment.line.double-slash.scala punctuation.definition.comment.scala
+  / ensure comment start with two double slashes
+  ^ - comment.line.double slash.scala
+
+  / or you can combine both positive and negative scopes
+  ^ source.scala - comment.line.double slash.scala
 ```
 
 Lines which start with a `<comment token>` and assertion symbol are ignored by the textmate grammar.
