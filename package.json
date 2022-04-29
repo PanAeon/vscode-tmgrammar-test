@@ -1,9 +1,7 @@
 {
   "name": "vscode-tmgrammar-test",
   "version": "0.1.1-snapshot",
-  "description": "Test helper for VSCode textmate grammars",
-  "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
+  "description": "Test runner for VSCode textmate grammars",
   "homepage": "https://github.com/PanAeon/vscode-tmgrammar-test",
   "repository": {
     "type": "git",
@@ -20,8 +18,8 @@
     "test": "mocha -r ts-node/register 'test/**/*.test.ts'"
   },
   "bin": {
-    "vscode-tmgrammar-test": "./dist/src/unit.js",
-    "vscode-tmgrammar-snap": "./dist/src/snapshot.js"
+    "vscode-tmgrammar-test": "./dist/unit.js",
+    "vscode-tmgrammar-snap": "./dist/snapshot.js"
   },
   "keywords": [
     "test",

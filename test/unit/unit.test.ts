@@ -9,6 +9,10 @@ var registry = createRegistry([
   {
     scopeName: 'source.dhall',
     path: './test/resources/dhall.tmLanguage.json'
+  },
+  {
+    scopeName: 'source.terraform',
+    path: './test/resources/terraform.tmLanguage.json'
   }
 ])
 
@@ -487,5 +491,12 @@ describe('Grammar test case', () => {
         }
       ])
     })
+  })
+  it('should count line with comment token and no assertions as a source line', () => {
+    return runGrammarTestCase(registry, parseGrammarTestCase(loadFile('./test/resources/sourceLineA.tf'))).then(
+      (result) => {
+        expect(result).to.eql([])
+      }
+    )
   })
 })

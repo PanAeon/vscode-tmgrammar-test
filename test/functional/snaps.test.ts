@@ -12,7 +12,7 @@ describe('snap test', () => {
 
   it('should report OK for test without errors', async () => {
     return exec(
-      `node ${root}/dist/src/snapshot.js ` +
+      `node ${root}/dist/snapshot.js ` +
         `--scope source.dhall ` +
         `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
         `${__dirname}/resources/snap-ok-scenario/simple.dhall`,
@@ -29,7 +29,7 @@ describe('snap test', () => {
 
   it('should report wrong or missing scopes', () => {
     return exec(
-      `node ${root}/dist/src/snapshot.js ` +
+      `node ${root}/dist/snapshot.js ` +
         `--scope source.dhall ` +
         `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
         `${__dirname}/resources/snap-simple-failure/simple.dhall`,
@@ -60,7 +60,7 @@ describe('snap test', () => {
       `${__dirname}/resources/snap-update-snapshot/simple.dhall.snap`
     )
     await exec(
-      `node ${root}/dist/src/snapshot.js ` +
+      `node ${root}/dist/snapshot.js ` +
         `--scope source.dhall ` +
         `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
         `--updateSnapshot ` +
@@ -71,7 +71,7 @@ describe('snap test', () => {
     )
 
     await exec(
-      `node ${root}/dist/src/snapshot.js ` +
+      `node ${root}/dist/snapshot.js ` +
         `--scope source.dhall ` +
         `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
         `${__dirname}/resources/snap-update-snapshot/simple.dhall`,

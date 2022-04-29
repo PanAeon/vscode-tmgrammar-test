@@ -99,7 +99,7 @@ export function parseGrammarTestCase(str: string): GrammarTestCase {
   let rest = lines.slice(headerLength)
   let commentTokenLength = commentToken.length
 
-  function isLineAssertion(s:string):boolean {
+  function isLineAssertion(s: string): boolean {
     return s.startsWith(commentToken) && /^\s*(\^|<[~]*[-]+)/.test(s.substring(commentTokenLength))
   }
 

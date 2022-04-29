@@ -12,7 +12,7 @@ describe('unit test', () => {
 
   it('should report OK for test without errors', () => {
     return exec(
-      `node ${root}/dist/src/unit.js ` +
+      `node ${root}/dist/unit.js ` +
         `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
         `${__dirname}/resources/unit-ok-scenario/success.dhall`,
       {
@@ -28,7 +28,7 @@ describe('unit test', () => {
 
   it('should report Unexpected scopes', () => {
     return exec(
-      `node ${root}/dist/src/unit.js  ` +
+      `node ${root}/dist/unit.js  ` +
         `--grammar ${root}/test/resources/dhall.tmLanguage.json ` +
         `${__dirname}/resources/unit-report-unexpected-scopes/unexpected.scopes.test.dhall`,
       {

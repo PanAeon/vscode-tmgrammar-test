@@ -10,22 +10,23 @@ import { runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure 
 
 import { createRegistry, loadConfiguration, IGrammarConfig } from './common/index'
 
-let packageJson = require('../../package.json')
+let packageJson = require('../package.json')
 
 function collectGrammarOpts(value: String, previous: String[]): String[] {
   return previous.concat([value])
 }
 
 program
-  .version(packageJson.version)
   .description('Run Textmate grammar test cases using vscode-textmate')
   .option(
     '-g, --grammar <grammar>',
-    'Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed.',
+    "Path to a grammar file. Multiple options supported. 'scopeName' is taken from the grammar",
     collectGrammarOpts,
     []
   )
+  .option('--config <configuration.json>', 'Path to the language configuration, package.json by default')
   .option('-c, --compact', 'Display output in the compact format, which is easier to use with VSCode problem matchers')
+  .version(packageJson.version)
   .argument(
     '<testcases...>',
     'A glob pattern(s) which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!'

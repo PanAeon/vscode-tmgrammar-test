@@ -4,12 +4,9 @@
 
 Provides a way to test textmate grammars against a vscode engine using user-friendly plaintext files.
 
-* Unit tests:
-![Showcase unit](images/showcase.gif?raw=true "unit test in action")
+Demo:
 
-* Snapshot tests:
-
-![Showcase snap](images/Snapshots.png "snapshots test in action")
+[![asciicast](https://asciinema.org/a/QoGS5fPsxDOHl1T43zzmFxJAU.svg)](https://asciinema.org/a/QoGS5fPsxDOHl1T43zzmFxJAU)
 
 Inspired by [Sublime Text syntax tests](https://www.sublimetext.com/docs/3/syntax.html#testing)
 
@@ -19,7 +16,7 @@ Inspired by [Sublime Text syntax tests](https://www.sublimetext.com/docs/3/synta
 As a project dependency:
 
 ```bash
-npm i --save vscode-tmgrammar-test
+npm i --save-dev vscode-tmgrammar-test
 ```
 
 Or as a standalone command line tool:
@@ -35,7 +32,7 @@ vscode-tmgrammar-test --help
 ```scala
 // SYNTAX TEST "source.scala" "sample testcase"
 
-// line which start with a <comment token> but don't have valid assertions are ignored
+// line can start with a <comment token> and not have a valid assertion
 
 class Stack[A] {
 // <-----  keyword.declaration.scala
@@ -45,17 +42,6 @@ class Stack[A] {
 //          ^  entity.name.class
 //           ^  meta.bracket.scala
 //             ^  punctuation.section.block.begin.scala
-  private var elements: List[A] = Nil
-    def push(x: A) { elements = x :: elements }
-    def peek: A = elements.head
-    def pop(): A = {
-      val currentTop = peek
-      elements = elements.tail
-      currentTop
-  }
-// <~~- punctuation.section.block.end.scala
-}
-
 ```
 
 To write a unit test:
@@ -90,11 +76,17 @@ x=5
   ^ - comment.line.double-slash.scala punctuation.definition.comment.scala
 ```
 
-Any lines which start with a `<comment token>` will be ignored by the textmate grammar.
+Lines which start with a `<comment token>` and assertion symbol are ignored by the textmate grammar.
 
 
 Note, that scope comparison takes into account relative scope's position.
 So, if required scopes are `'scope1 scope2'`, the test will report an error if a grammar returns them as `'scope2 scope1'`.
+
+To run a unit test:
+```bash
+vscode-tmgrammar-test  'tests/unit/**/*.test.scala'
+```
+
 
 ### Snapshot tests
 Snapshot tests are like `functional tests` but you don't have to write outputs explicitly.
@@ -106,54 +98,88 @@ Then if you change the grammar and run the test again, the program will output t
 the `.snap` file and the real output.
 If you satisfied with the changes you can `commit` them by running
 ```bash
-vscode-tmgrammar-snap .... --updateSnapshot
+vscode-tmgrammar-snap --updateSnapshot .... 
 ```
 this will overwrite the existing `.snap` files with a new ones.
 After this you should commit them alongside with the source code test cases.
 
 You can read more about them at [snapshot testing](https://jestjs.io/docs/en/snapshot-testing)
 
+To run snapshot test:
+```bash
+vscode-tmgrammar-snap 'tests/snap/**/*.scala'
+```
+
+### Language configuration via package.json
+
+The configuration follows the format of vscode:
+
+```json
+{
+    "contributes": {
+        "languages": [
+            {
+                "id": "scala",
+                "extensions": [
+                    ".scala",
+                    ".sbt",
+                    ".sc"
+                ]
+            }
+        ],
+        "grammars": [
+            {
+                "language": "scala",
+                "scopeName": "source.scala",
+                "path": "./syntaxes/Scala.tmLanguage.json"
+            }
+        ]
+    }
+}
+```
+The idea is that for the average language extension all necessary information for tests are already included in the `package.json`.
+It is optional, though. If the configuration is missing it is necessary to specify grammars and scopeName of testcases via command line options.
+
+Right now only regular grammars and *Injection Grammars* via `injectTo` directive are supported.
 
 
 ### Command Line Options
 
-* Unit tests:
+Unit tests:
 ```
-Usage: vscode-tmgrammar-test [options]
+Usage: vscode-tmgrammar-test [options] <testcases...>
 
 Run Textmate grammar test cases using vscode-textmate
 
+Arguments:
+  testcases                      A glob pattern(s) which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
+
 Options:
-  -V, --version            output the version number
-  -s, --scope <scope>      Language scope, e.g. source.dhall
-  -g, --grammar <grammar>  Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed. (default: [])
-  -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
-  -v, --validate           Validate the grammar file for well-formedness and pattern validity instead of running testcases.
-  -c, --compact            Display output in the compact format, which is easier to use with VSCode problem matchers
-  -h, --help               output usage information
+  -g, --grammar <grammar>        Path to a grammar file. Multiple options supported. 'scopeName' is taken from the grammar (default: [])
+  --config <configuration.json>  Path to the language configuration, package.json by default
+  -c, --compact                  Display output in the compact format, which is easier to use with VSCode problem matchers
+  -V, --version                  output the version number
+  -h, --help                     display help for command
 ```
 
-* Snapshot tests:
+Snapshot tests:
 ```
-Usage: vscode-tmgrammar-snap [options]
+Usage: vscode-tmgrammar-snap [options] <testcases...>
 
 Run VSCode textmate grammar snapshot tests
 
+Arguments:
+  testcases                      A glob pattern(s) which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
+
 Options:
-  -V, --version            output the version number
-  -s, --scope <scope>      Language scope, e.g. source.dhall
-  -g, --grammar <grammar>  Path to a grammar file, either .json or .xml. This option can be specified multiple times if multiple grammar needed. (default: [])
-  -t, --testcases <glob>   A glob pattern which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
-  -u, --updateSnapshot     overwrite all snap files with new changes
-  --printNotModified       include not modified scopes in the output
-  --expandDiff             produce each diff on two lines prefixed with "++" and "--"
-  -h, --help               output usage information
-```
-
-Example:
-
-```bash
-> vscode-tmgrammar-test -s source.dhall -g testcase/dhall.tmLanguage.json -t "**/*.dhall"
+  -u, --updateSnapshot           overwrite all snap files with new changes
+  --config <configuration.json>  Path to the language configuration, package.json by default
+  --printNotModified             include not modified scopes in the output (default: false)
+  --expandDiff                   produce each diff on two lines prefixed with "++" and "--" (default: false)
+  -g, --grammar <grammar>        Path to a grammar file. Multiple options supported. 'scopeName' is taken from the grammar (default: [])
+  -s, --scope <scope>            Explicitly specify scope of testcases, e.g. source.dhall
+  -V, --version                  output the version number
+  -h, --help                     display help for command
 ```
 
 ### Setup VSCode unit test task
@@ -164,7 +190,7 @@ You can setup a vscode unit test task for convenience:
 {
             "label": "Run tests",
             "type": "shell",
-            "command": "vscode-tmgrammar-test -c -s source.dhall -g testcase/dhall.tmLanguage.json -t \"**/*.dhall\"",
+            "command": "vscode-tmgrammar-test -c -g testcase/dhall.tmLanguage.json  \"**/*.dhall\"",
             "group": "test",
             "presentation": {
                 "reveal": "always",

@@ -1,0 +1,22 @@
+{
+	"scopeName": "source.terraform",
+	"name": "Terraform",
+	"patterns": [
+		{
+			"include": "#comments"
+		}
+	],
+	"repository": {
+		"comments": {
+			"begin": "#|//",
+			"comment": "Inline Comments",
+			"name": "comment.line.terraform",
+			"captures": {
+				"0": {
+					"name": "punctuation.definition.comment.terraform"
+				}
+			},
+			"end": "$\\n?"
+		}
+	}
+}

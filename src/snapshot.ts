@@ -11,12 +11,12 @@ import { getVSCodeTokens, renderSnap, parseSnap, AnnotatedLine } from './snapsho
 import * as diff from 'diff'
 import * as path from 'path'
 
-let packageJson = require('../../package.json')
+let packageJson = require('../package.json')
 
 program
   .description('Run VSCode textmate grammar snapshot tests')
   .option('-u, --updateSnapshot', 'overwrite all snap files with new changes')
-  .option('-c, --config <configuration.json>', 'Path to the language configuration, package.json by default')
+  .option('--config <configuration.json>', 'Path to the language configuration, package.json by default')
   .option('--printNotModified', 'include not modified scopes in the output', false)
   .option('--expandDiff', 'produce each diff on two lines prefixed with "++" and "--"', false)
   .option(
@@ -65,7 +65,7 @@ const rawTestCases = program.args.map((x) => glob.sync(x)).flat()
 
 const testCases = rawTestCases.filter((x) => !x.endsWith('.snap'))
 
-if (testCases.length == 0) {
+if (testCases.length === 0) {
   console.log(chalk.red('ERROR') + " No testcases found. Got: '" + chalk.gray(program.args.join(',')) + "'")
   process.exit(-1)
 }
