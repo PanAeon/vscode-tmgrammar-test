@@ -86,7 +86,7 @@ const testResults: Promise<number[]> = Promise.all(
       .then((tokens) => {
         if (fs.existsSync(filename + '.snap')) {
           if (options.updateSnapshot) {
-            console.log(chalk.yellowBright('Updating snapshot for') + chalk.whiteBright(filename + '.snap'))
+            console.log(chalk.yellowBright('Updating snapshot for ') + chalk.whiteBright(filename + '.snap'))
             fs.writeFileSync(filename + '.snap', renderSnap(tokens), 'utf8')
             return TestSuccessful
           } else {
