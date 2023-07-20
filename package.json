@@ -38,13 +38,15 @@
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.37",
+    "@types/xml2js": "^0.4.11",
     "chai": "^4.2.0",
     "mocha": "^10.2.0",
     "nyc": "^15.0.1",
     "prettier": "^2.1.2",
     "ts-node": "^8.10.2",
     "tslint": "^5.20.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "xml2js": "^0.6.0"
   },
   "dependencies": {
     "chalk": "^2.4.2",
