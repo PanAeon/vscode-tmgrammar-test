@@ -77,23 +77,13 @@ export class XunitReporter implements Reporter, Colorizer {
                 const bodyLines: string[] = []
                 printSourceLine(parsedFile, failure, 200, m => bodyLines.push(m), this)
                 printReason(parsedFile, failure, m => bodyLines.push(m), this)
-                const body = this.escapedXml(bodyLines.join("\n"))
                 c.failures.push({
                     type: 'failure',
                     message: `Assertion failed at ${l}:${s}:${e}`,
-                    body
+                    body: bodyLines.join("\n")
                 })
             }
         }
-    }
-
-    escapedXml(raw: string): string {
-        return raw
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&apos;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
     }
 
     reportParseError(filename: string, error: any): void {
@@ -103,7 +93,7 @@ export class XunitReporter implements Reporter, Colorizer {
             failures: [{
                 type: 'error',
                 message: "Failed to parse test file",
-                body: JSON.stringify(error)
+                body: `${error}`
             }]
         })
     }
@@ -115,7 +105,7 @@ export class XunitReporter implements Reporter, Colorizer {
             failures: [{
                 type: 'error',
                 message: "Error when running grammar tests",
-                body: JSON.stringify(reason)
+                body: `${reason}`
             }]
         })
     }
@@ -157,7 +147,8 @@ export class XunitReporter implements Reporter, Colorizer {
             fs.writeFileSync(p.resolve(this.reportPath, suite.file), this.renderSuite(suite))
         }
     }
-    renderSuite(s: XunitSuite): string {
+
+    private renderSuite(s: XunitSuite): string {
         return `
 <testsuite 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -172,16 +163,25 @@ export class XunitReporter implements Reporter, Colorizer {
 `
     }
 
-    renderCase(c: XunitCase): string {
+    private renderCase(c: XunitCase): string {
         return `  <testcase name="${c.name}" time="0">${c.failures.reduce((a, f) => a + "\n" + this.renderFailure(f), "")}${this.newlineIfHasItems(c.failures)}</testcase>`
     }
 
-    renderFailure(f: XunitFailure): string {
-        return `    <${f.type} message="${f.message}" type="${f.type === 'failure' ? 'TestFailure' : 'GrammarTestError'}">${f.body}</${f.type}>`
+    private renderFailure(f: XunitFailure): string {
+        return `    <${f.type} message="${f.message}" type="${f.type === 'failure' ? 'TestFailure' : 'GrammarTestError'}">${this.escapedXml(f.body)}</${f.type}>`
     }
 
-    newlineIfHasItems(arr: any[]): string {
+    private newlineIfHasItems(arr: any[]): string {
         return arr.length === 0 ? "" : "\n"
+    }
+
+    private escapedXml(raw: string): string {
+        return raw
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
     }
 }
 
@@ -235,7 +235,7 @@ export class ConsoleCompactReporter implements Reporter {
         }
     }
 
-    renderCompactErrorMsg(testCase: GrammarTestCase, failure: TestFailure): string {
+    private renderCompactErrorMsg(testCase: GrammarTestCase, failure: TestFailure): string {
         let res = ''
         if (failure.missing && failure.missing.length > 0) {
             res += `Missing required scopes: [ ${failure.missing.join(' ')} ] `

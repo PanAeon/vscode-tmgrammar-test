@@ -5,43 +5,9 @@ import * as p from 'path'
 import { parseStringPromise } from 'xml2js'
 
 import { XunitReporter } from '../../../src/unit/reporter'
-import { GrammarTestCase, LineAssertion, TestCaseMetadata, TestFailure } from '../../../src/unit/model'
+import { LineAssertion, TestCaseMetadata, TestFailure } from '../../../src/unit/model'
 
 describe('XUnit reporter', () => {
-
-    function metadata(description?: string): TestCaseMetadata {
-        return {
-            scope: 'main.scope',
-            commentToken: '//',
-            description: description || "",
-            allowMiddleLineAssertions: true
-        }
-    }
-
-    function lineAssertion(sourceLineNumber: number, testCaseLineNumber?: number): LineAssertion {
-        return {
-            sourceLineNumber: sourceLineNumber - 1,
-            testCaseLineNumber: testCaseLineNumber
-                ? testCaseLineNumber - 1
-                : sourceLineNumber,
-            scopeAssertions: [{
-                from: 1, to: 2, scopes: ['scope1'], exclude: []
-            }]
-        }
-    }
-
-    function assertionFailure(
-        sourceLineNumber: number, testCaseLineNumber: number,
-        start: number, end: number,
-        actual: string[], missing: string[], unexpected: string[],
-    ): TestFailure {
-        return {
-            actual, missing, unexpected,
-            srcLine: sourceLineNumber - 1,
-            line: testCaseLineNumber - 1,
-            start, end
-        }
-    }
 
     let reportsDir: string
     let reporter: XunitReporter
@@ -73,13 +39,10 @@ describe('XUnit reporter', () => {
         }, [])
         reporter.reportSuiteResult()
 
-        const reportFiles = fs.readdirSync(reportsDir)
-        expect(reportFiles)
-            .members([
-                'TEST-file1.xml',
-                'TEST-file2.xml'
-            ])
-            .length(2)
+        assertReportFiles(
+            'TEST-file1.xml',
+            'TEST-file2.xml'
+        )
 
         const xml1 = await readReport('TEST-file1.xml')
         expect(xml1.testsuite.$.name).eq('case 1 description')
@@ -115,14 +78,11 @@ describe('XUnit reporter', () => {
         }, [])
         reporter.reportSuiteResult()
 
-        const reportFiles = fs.readdirSync(reportsDir)
-        expect(reportFiles)
-            .members([
-                'TEST-file1.xml',
-                'TEST-dir1.file2.xml',
-                'TEST-dir1.dir2.file3.xml',
-            ])
-            .length(3)
+        assertReportFiles(
+            'TEST-file1.xml',
+            'TEST-dir1.file2.xml',
+            'TEST-dir1.dir2.file3.xml',
+        )
 
         const xml1 = await readReport('TEST-file1.xml')
         expect(xml1.testsuite.$.name).eq('file1')
@@ -161,7 +121,7 @@ describe('XUnit reporter', () => {
         ].join("\n"))
     })
 
-    it('should associate failures with assertions', async () => {
+    it('should associate assertion failures with source lines', async () => {
         reporter.reportTestResult('file', {
             source: [
                 '1  source1',
@@ -191,12 +151,7 @@ describe('XUnit reporter', () => {
         ])
         reporter.reportSuiteResult()
 
-        const reportFiles = fs.readdirSync(reportsDir)
-        expect(reportFiles)
-            .members([
-                'TEST-file.xml',
-            ])
-            .length(1)
+        assertReportFiles('TEST-file.xml')
 
         const xml = await readReport('TEST-file.xml')
         expect(xml.testsuite.$.tests).eq('4')
@@ -242,8 +197,127 @@ describe('XUnit reporter', () => {
         expect(xmlCase4.failure).is.undefined
     })
 
+    it('should create report for test file which fails to parse', async () => {
+        reporter.reportTestResult('file1', {
+            source: ['source1'],
+            metadata: metadata(),
+            assertions: [lineAssertion(10)]
+        }, [])
+        reporter.reportParseError('file2', new Error(
+            'Expecting the first line in the syntax test file to be in the following format:\n' +
+            '<comment character(s)> SYNTAX TEST "<language identifier>"  ("description")?\n'))
+        reporter.reportTestResult('file3', {
+            source: ['source3'],
+            metadata: metadata(),
+            assertions: [lineAssertion(30)]
+        }, [])
+        reporter.reportSuiteResult()
+
+        assertReportFiles(
+            'TEST-file1.xml',
+            'TEST-file2.xml',
+            'TEST-file3.xml',
+        )
+
+        const xml = await readReport('TEST-file2.xml')
+        expect(xml.testsuite.$.tests).eq('1')
+        expect(xml.testsuite.$.failures).eq('0')
+        expect(xml.testsuite.$.errors).eq('1')
+        expect(xml.testsuite.testcase).length(1)
+
+        const xmlCase = xml.testsuite.testcase[0]
+        expect(xmlCase.$.name).eq('Parse test file')
+        expect(xmlCase.failure).is.undefined
+        expect(xmlCase.error).length(1)
+        expect(xmlCase.error[0].$.message).eq("Failed to parse test file")
+        expect(xmlCase.error[0]._).satisfy((m: string) => m.startsWith([
+            'Error: Expecting the first line in the syntax test file to be in the following format:',
+            '<comment character(s)> SYNTAX TEST "<language identifier>"  ("description")?',
+        ].join("\n")))
+    })
+
+    it('should create report for test file which errors when running grammar test', async () => {
+        reporter.reportTestResult('file1', {
+            source: ['source1'],
+            metadata: metadata(),
+            assertions: [lineAssertion(10)]
+        }, [])
+        reporter.reportGrammarTestError('file2', {
+            source: ['source1'],
+            metadata: metadata(),
+            assertions: [lineAssertion(10)]
+        }, new Error('No grammar provided for <foobar>'))
+        reporter.reportTestResult('file3', {
+            source: ['source3'],
+            metadata: metadata(),
+            assertions: [lineAssertion(30)]
+        }, [])
+        reporter.reportSuiteResult()
+
+        assertReportFiles(
+            'TEST-file1.xml',
+            'TEST-file2.xml',
+            'TEST-file3.xml',
+        )
+
+        const xml = await readReport('TEST-file2.xml')
+        expect(xml.testsuite.$.tests).eq('1')
+        expect(xml.testsuite.$.failures).eq('0')
+        expect(xml.testsuite.$.errors).eq('1')
+        expect(xml.testsuite.testcase).length(1)
+
+        const xmlCase = xml.testsuite.testcase[0]
+        expect(xmlCase.$.name).eq('Run grammar tests')
+        expect(xmlCase.failure).is.undefined
+        expect(xmlCase.error).length(1)
+        expect(xmlCase.error[0].$.message).eq("Error when running grammar tests")
+        expect(xmlCase.error[0]._).satisfy((m: string) => m.startsWith([
+            'Error: No grammar provided for <foobar>',
+        ].join("\n")))
+    })
+
+    const assertReportFiles: (...expected: string[]) => void = (...expected: string[]) => {
+        const reportFiles = fs.readdirSync(reportsDir)
+        expect(reportFiles)
+            .members(expected)
+            .length(expected.length)
+    }
+
     const readReport: (filename: string) => any = async (filename: string) => {
         return await parseStringPromise(fs.readFileSync(p.resolve(reportsDir, filename)))
     }
 })
 
+function metadata(description?: string): TestCaseMetadata {
+    return {
+        scope: 'main.scope',
+        commentToken: '//',
+        description: description || "",
+        allowMiddleLineAssertions: true
+    }
+}
+
+function lineAssertion(sourceLineNumber: number, testCaseLineNumber?: number): LineAssertion {
+    return {
+        sourceLineNumber: sourceLineNumber - 1,
+        testCaseLineNumber: testCaseLineNumber
+            ? testCaseLineNumber - 1
+            : sourceLineNumber,
+        scopeAssertions: [{
+            from: 1, to: 2, scopes: ['scope1'], exclude: []
+        }]
+    }
+}
+
+function assertionFailure(
+    sourceLineNumber: number, testCaseLineNumber: number,
+    start: number, end: number,
+    actual: string[], missing: string[], unexpected: string[],
+): TestFailure {
+    return {
+        actual, missing, unexpected,
+        srcLine: sourceLineNumber - 1,
+        line: testCaseLineNumber - 1,
+        start, end
+    }
+}
