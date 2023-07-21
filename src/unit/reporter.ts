@@ -44,6 +44,7 @@ interface XunitSuite {
 
 interface XunitCase {
     readonly name: string
+    readonly classname?: string
     readonly failures: XunitFailure[]
 }
 
@@ -53,43 +54,26 @@ interface XunitFailure {
     readonly body: string
 }
 
-export class XunitReporter implements Reporter, Colorizer {
-    // follows this schema https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd and produces one report file per test file
-    // if some CI requires single report file may also implement reporter for this format https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd
+abstract class XunitReportPerTestReporter implements Reporter, Colorizer {
+    // follows this schema https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd 
+    // produces report in a way which looks nice when viewed in GitLab CI/CD web GUI, but is not neccesarily semantically correct
     private suites: XunitSuite[] = []
 
     constructor(private reportPath: string) { }
 
-    reportTestResult(filename: string, parsedFile: GrammarTestCase, failures: TestFailure[]): void {
-        const suite = this.getSuite(filename, parsedFile)
+    abstract reportTestResult(filename: string, parsedFile: GrammarTestCase, failures: TestFailure[]): void
 
-        // source line in the test file is treated as testcase
-        // and every failed assertion associated with this source line is failure in that testcase
+    protected abstract caseClassname(filename: string): string | undefined
 
-        for (const assertion of parsedFile.assertions) {
-            const c = this.getCase(suite, filename, assertion);
-            for (const failure of failures) {
-                if (failure.line !== assertion.testCaseLineNumber) {
-                    continue
-                }
-                const { l, s, e } = getCorrectedOffsets(failure)
+    protected abstract suiteFailuresCount(suite: XunitSuite): number
 
-                const bodyLines: string[] = []
-                printSourceLine(parsedFile, failure, 200, m => bodyLines.push(m), this)
-                printReason(parsedFile, failure, m => bodyLines.push(m), this)
-                c.failures.push({
-                    type: 'failure',
-                    message: `Assertion failed at ${l}:${s}:${e}`,
-                    body: bodyLines.join("\n")
-                })
-            }
-        }
-    }
+    protected abstract suiteErrorsCount(suite: XunitSuite): number
 
     reportParseError(filename: string, error: any): void {
         const suite = this.getSuite(filename)
         suite.cases.push({
             name: "Parse test file",
+            classname: this.caseClassname(filename),
             failures: [{
                 type: 'error',
                 message: "Failed to parse test file",
@@ -102,6 +86,7 @@ export class XunitReporter implements Reporter, Colorizer {
         const suite = this.getSuite(filename, parsedFile)
         suite.cases.push({
             name: "Run grammar tests",
+            classname: this.caseClassname(filename),
             failures: [{
                 type: 'error',
                 message: "Error when running grammar tests",
@@ -116,8 +101,11 @@ export class XunitReporter implements Reporter, Colorizer {
     gray(text: string): string {
         return text
     }
+    whiteBright(text: string): string {
+        return text
+    }
 
-    private getSuite(filename: string, parsedFile?: GrammarTestCase): XunitSuite {
+    protected getSuite(filename: string, parsedFile?: GrammarTestCase): XunitSuite {
         const suite: XunitSuite = {
             file: `TEST-${filename.replace(/\//g, '.')}.xml`,
             name: parsedFile?.metadata.description || filename,
@@ -127,15 +115,17 @@ export class XunitReporter implements Reporter, Colorizer {
         return suite
     }
 
-    private getCase(suite: XunitSuite, filename: string, assertion: LineAssertion): XunitCase {
-        const name = `${filename}:${assertion.sourceLineNumber + 1}`
+    protected getCase(suite: XunitSuite, filename: string, assertion: LineAssertion): XunitCase {
+        const name = `${filename}:${assertion.testCaseLineNumber + 1}`
         for (const c of suite.cases) {
             if (c.name === name) {
                 return c
             }
         }
         const c: XunitCase = {
-            name, failures: []
+            name,
+            classname: this.caseClassname(filename),
+            failures: []
         }
         suite.cases.push(c)
         return c
@@ -155,8 +145,8 @@ export class XunitReporter implements Reporter, Colorizer {
     xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd"
     name="${s.name}"
     tests="${s.cases.length}"
-    failures="${s.cases.reduce((accSuite, c) => accSuite + c.failures.reduce((accCase, f) => accCase + (f.type === 'failure' ? 1 : 0), 0), 0)}"
-    errors="${s.cases.reduce((accSuite, c) => accSuite + c.failures.reduce((accCase, f) => accCase + (f.type === 'error' ? 1 : 0), 0), 0)}"
+    failures="${this.suiteFailuresCount(s)}"
+    errors="${this.suiteErrorsCount(s)}"
     skipped="0"
 >${s.cases.reduce((a, c) => a + "\n" + this.renderCase(c), "")}
 </testsuite>
@@ -164,7 +154,11 @@ export class XunitReporter implements Reporter, Colorizer {
     }
 
     private renderCase(c: XunitCase): string {
-        return `  <testcase name="${c.name}" time="0">${c.failures.reduce((a, f) => a + "\n" + this.renderFailure(f), "")}${this.newlineIfHasItems(c.failures)}</testcase>`
+        return `  <testcase name="${c.name}" ${this.classnameAttr(c)}time="0">${c.failures.reduce((a, f) => a + "\n" + this.renderFailure(f), "")}${this.newlineIfHasItems(c.failures)}</testcase>`
+    }
+
+    private classnameAttr(c: XunitCase): string {
+        return c.classname ? `classname="${c.classname}" ` : ""
     }
 
     private renderFailure(f: XunitFailure): string {
@@ -182,6 +176,96 @@ export class XunitReporter implements Reporter, Colorizer {
             .replace(/'/g, '&apos;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
+    }
+}
+
+export class XunitGenericReporter extends XunitReportPerTestReporter {
+
+    // follows this schema https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd and produces one report file per test file
+    // if some CI requires single report file may also implement reporter for this format https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd
+
+    constructor(reportPath: string) {
+        super(reportPath)
+    }
+
+    reportTestResult(filename: string, parsedFile: GrammarTestCase, failures: TestFailure[]): void {
+        const suite = this.getSuite(filename, parsedFile)
+
+        // source line in the test file is treated as testcase
+        // and every failed assertion associated with this source line is failure in that testcase
+
+        for (const assertion of parsedFile.assertions) {
+            const c = this.getCase(suite, filename, assertion);
+            for (const failure of failures) {
+                if (failure.line !== assertion.testCaseLineNumber) {
+                    continue
+                }
+                const { l, s, e } = getCorrectedOffsets(failure)
+
+                const bodyLines: string[] = []
+                printSourceLine(parsedFile, failure, '', 200, m => bodyLines.push(m), this)
+                printReason(parsedFile, failure, '', m => bodyLines.push(m), this)
+                c.failures.push({
+                    type: 'failure',
+                    message: `Assertion failed at ${l}:${s}:${e}`,
+                    body: bodyLines.join("\n")
+                })
+            }
+        }
+    }
+
+    protected caseClassname(filename: string): undefined {
+        return undefined
+    }
+    protected suiteFailuresCount(s: XunitSuite): number {
+        return s.cases.reduce((accSuite, c) => accSuite + c.failures.reduce((accCase, f) => accCase + (f.type === 'failure' ? 1 : 0), 0), 0)
+    }
+    protected suiteErrorsCount(s: XunitSuite): number {
+        return s.cases.reduce((accSuite, c) => accSuite + c.failures.reduce((accCase, f) => accCase + (f.type === 'error' ? 1 : 0), 0), 0)
+    }
+}
+
+export class XunitGitlabReporter extends XunitReportPerTestReporter {
+    // follows this schema https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd 
+    // produces report in a way which looks nice when viewed in GitLab CI/CD web GUI, but is not neccesarily semantically correct
+
+    constructor(reportPath: string) {
+        super(reportPath)
+    }
+
+    reportTestResult(filename: string, parsedFile: GrammarTestCase, failures: TestFailure[]): void {
+        const suite = this.getSuite(filename, parsedFile)
+
+        for (const assertion of parsedFile.assertions) {
+            const c = this.getCase(suite, filename, assertion);
+            const bodyLines: string[] = []
+            for (const failure of failures) {
+                if (failure.line !== assertion.testCaseLineNumber) {
+                    continue
+                }
+                printAssertionLocation(filename, failure, '', m => bodyLines.push(m), this)
+                printSourceLine(parsedFile, failure, '', 200, m => bodyLines.push(m), this)
+                printReason(parsedFile, failure, '', m => bodyLines.push(m), this)
+                bodyLines.push("")
+            }
+            if (bodyLines.length > 0) {
+                c.failures.push({
+                    type: 'failure',
+                    message: `Failed at soure line ${assertion.testCaseLineNumber + 1}`,
+                    body: bodyLines.join("\n")
+                })
+            }
+        }
+    }
+
+    protected caseClassname(filename: string): string {
+        return filename
+    }
+    protected suiteFailuresCount(s: XunitSuite): number {
+        return s.cases.reduce((accSuite, c) => accSuite + (c.failures.some(f => f.type === 'failure') ? 1 : 0), 0)
+    }
+    protected suiteErrorsCount(s: XunitSuite): number {
+        return s.cases.reduce((accSuite, c) => accSuite + (c.failures.some(f => f.type === 'error') ? 1 : 0), 0)
     }
 }
 
@@ -265,10 +349,9 @@ export class ConsoleFullReporter implements Reporter {
         } else {
             console.log(chalk.red(symbols.err + ' ' + filename + ' failed'))
             failures.forEach((failure) => {
-                const { l, s, e } = getCorrectedOffsets(failure)
-                console.log(Padding + 'at [' + chalk.whiteBright(`${filename}:${l}:${s}:${e}`) + ']:')
-                printSourceLine(testCase, failure, terminalWidth, console.log, chalk)
-                printReason(testCase, failure, console.log, chalk)
+                printAssertionLocation(filename, failure, Padding, console.log, chalk)
+                printSourceLine(testCase, failure, Padding, terminalWidth, console.log, chalk)
+                printReason(testCase, failure, Padding, console.log, chalk)
 
                 console.log(EOL)
             })
@@ -281,6 +364,15 @@ export class ConsoleFullReporter implements Reporter {
     reportGrammarTestError = handleGrammarTestError
 
     reportSuiteResult(): void { }
+}
+
+function printAssertionLocation(
+    filename: string, failure: TestFailure,
+    padding: string,
+    sink: (message: string) => void, colorizer: Colorizer
+) {
+    const { l, s, e } = getCorrectedOffsets(failure)
+    sink(padding + 'at [' + colorizer.whiteBright(`${filename}:${l}:${s}:${e}`) + ']:')
 }
 
 function getCorrectedOffsets(failure: TestFailure): {
@@ -297,7 +389,7 @@ function getCorrectedOffsets(failure: TestFailure): {
 
 function printSourceLine(
     testCase: GrammarTestCase, failure: TestFailure,
-    terminalWidth: number,
+    padding: string, terminalWidth: number,
     sink: (message: string) => void, colorizer: Colorizer
 ) {
     const line = testCase.source[failure.srcLine]
@@ -311,26 +403,28 @@ function printSourceLine(
     const line1 = line.substr(trimLeft)
     const accents1 = accents.substr(trimLeft)
 
-    sink(Padding + colorizer.gray(pos) + line1.substr(0, termWidth))
-    sink(Padding + ' '.repeat(pos.length) + accents1.substr(0, termWidth))
+    sink(padding + colorizer.gray(pos) + line1.substr(0, termWidth))
+    sink(padding + ' '.repeat(pos.length) + accents1.substr(0, termWidth))
 }
 
 function printReason(
     testCase: GrammarTestCase, failure: TestFailure,
+    padding: string,
     sink: (message: string) => void, colorizer: Colorizer
 ) {
     if (failure.missing && failure.missing.length > 0) {
-        sink(colorizer.red(Padding + 'missing required scopes: ') + colorizer.gray(failure.missing.join(' ')))
+        sink(colorizer.red(padding + 'missing required scopes: ') + colorizer.gray(failure.missing.join(' ')))
     }
     if (failure.unexpected && failure.unexpected.length > 0) {
-        sink(colorizer.red(Padding + 'prohibited scopes: ') + colorizer.gray(failure.unexpected.join(' ')))
+        sink(colorizer.red(padding + 'prohibited scopes: ') + colorizer.gray(failure.unexpected.join(' ')))
     }
     if (failure.actual !== undefined) {
-        sink(colorizer.red(Padding + 'actual: ') + colorizer.gray(failure.actual.join(' ')))
+        sink(colorizer.red(padding + 'actual: ') + colorizer.gray(failure.actual.join(' ')))
     }
 }
 
 interface Colorizer {
     red(text: string): string;
     gray(text: string): string
+    whiteBright(text: string): string
 }

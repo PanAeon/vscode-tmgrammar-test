@@ -5,7 +5,11 @@ import chalk from 'chalk'
 import { program } from 'commander'
 import glob from 'glob'
 import { runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from './unit/index'
-import { Reporter, ConsoleCompactReporter, ConsoleFullReporter, XunitReporter, CompositeReporter } from './unit/reporter'
+import {
+  Reporter, CompositeReporter,
+  ConsoleCompactReporter, ConsoleFullReporter,
+  XunitGenericReporter, XunitGitlabReporter
+} from './unit/reporter'
 
 import { createRegistry, loadConfiguration, IGrammarConfig } from './common/index'
 
@@ -27,6 +31,7 @@ program
   .option('--config <configuration.json>', 'Path to the language configuration, package.json by default')
   .option('-c, --compact', 'Display output in the compact format, which is easier to use with VSCode problem matchers')
   .option('--xunit-report <report.xml>', 'Path to directory where test reports in the XUnit format will be emitted in addition to console output')
+  .option('--xunit-format <generic|gitlab>', 'Format of XML reports generated when --xunit-report is used. `gitlab` format is suitable for viewing the results in GitLab CI/CD web GUI')
   .version(packageJson.version)
   .argument(
     '<testcases...>',
@@ -52,11 +57,15 @@ if (options.validate) {
 }
 
 
-const consoleReporter = options.compact 
-  ? new ConsoleCompactReporter() 
+const consoleReporter = options.compact
+  ? new ConsoleCompactReporter()
   : new ConsoleFullReporter()
-const reporter: Reporter  = options.xunitReport
-  ? new CompositeReporter(consoleReporter, new XunitReporter(options.xunitReport))
+const reporter: Reporter = options.xunitReport
+  ? new CompositeReporter(
+    consoleReporter,
+    options.xunitFormat === 'gitlab'
+      ? new XunitGitlabReporter(options.xunitReport)
+      : new XunitGenericReporter(options.xunitReport))
   : consoleReporter
 
 const rawTestCases = program.args.map((x) => glob.sync(x)).flat()
