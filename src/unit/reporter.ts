@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as p from 'path'
 import * as tty from 'tty'
 import { EOL } from 'os'
+import { sep } from 'path'
 import { GrammarTestCase, LineAssertion, TestFailure } from "./model"
 
 export interface Reporter {
@@ -107,7 +108,7 @@ abstract class XunitReportPerTestReporter implements Reporter, Colorizer {
 
     protected getSuite(filename: string, parsedFile?: GrammarTestCase): XunitSuite {
         const suite: XunitSuite = {
-            file: `TEST-${filename.replace(/\//g, '.')}.xml`,
+            file: `TEST-${filename.replaceAll(sep, '.')}.xml`,
             name: parsedFile?.metadata.description || filename,
             cases: []
         }

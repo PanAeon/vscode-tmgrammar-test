@@ -2,21 +2,24 @@
 import { expect } from 'chai'
 import * as fs from 'fs'
 import * as p from 'path'
+import * as os from 'os'
 import { parseStringPromise } from 'xml2js'
 
 import { Reporter, XunitGenericReporter, XunitGitlabReporter } from '../../../src/unit/reporter'
 import { LineAssertion, TestCaseMetadata, TestFailure } from '../../../src/unit/model'
+
+const sep = p.sep
 
 describe('XUnit reporters', () => {
 
     let reportsDir: string
 
     beforeEach(() => {
-        reportsDir = fs.mkdtempSync("/tmp/reports_")
+        reportsDir = fs.mkdtempSync(`${os.tmpdir}${sep}reports_`)
     })
 
     afterEach(() => {
-        fs.rmdirSync(reportsDir, { recursive: true })
+        fs.rmSync(reportsDir, { recursive: true })
     })
 
     describe('Generic XUnit reporter', () => {
@@ -72,12 +75,12 @@ describe('XUnit reporters', () => {
                 metadata: metadata(),
                 assertions: [lineAssertion(0, 1)]
             }, [])
-            reporter.reportTestResult('dir1/file2', {
+            reporter.reportTestResult(`dir1${sep}file2`, {
                 source: ['source2'],
                 metadata: metadata("case 2 description"),
                 assertions: [lineAssertion(0, 2)]
             }, [])
-            reporter.reportTestResult('dir1/dir2/file3', {
+            reporter.reportTestResult(`dir1${sep}dir2${sep}file3`, {
                 source: ['source3'],
                 metadata: metadata(),
                 assertions: [lineAssertion(0, 3)]
@@ -96,11 +99,11 @@ describe('XUnit reporters', () => {
 
             const xml2 = await readReport('TEST-dir1.file2.xml')
             expect(xml2.testsuite.$.name).eq('case 2 description')
-            expect(xml2.testsuite.testcase[0].$.name).eq('dir1/file2:2')
+            expect(xml2.testsuite.testcase[0].$.name).eq(`dir1${sep}file2:2`)
 
             const xml3 = await readReport('TEST-dir1.dir2.file3.xml')
-            expect(xml3.testsuite.$.name).eq('dir1/dir2/file3')
-            expect(xml3.testsuite.testcase[0].$.name).eq('dir1/dir2/file3:3')
+            expect(xml3.testsuite.$.name).eq(`dir1${sep}dir2${sep}file3`)
+            expect(xml3.testsuite.testcase[0].$.name).eq(`dir1${sep}dir2${sep}file3:3`)
         })
 
         it('should escape reserved characters in failure description', async () => {
