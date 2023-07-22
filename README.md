@@ -1,4 +1,4 @@
-![Node.js CI](https://img.shields.io/github/workflow/status/PanAeon/vscode-tmgrammar-test/Node.js%20CI?style=for-the-badge) ![NPM Version](https://img.shields.io/npm/v/vscode-tmgrammar-test?style=for-the-badge)
+![Node.js CI](https://img.shields.io/github/actions/workflow/status/PanAeon/vscode-tmgrammar-test/nodejs.yml?branch=master&style=for-the-badge) ![NPM Version](https://img.shields.io/npm/v/vscode-tmgrammar-test?style=for-the-badge)
 ## VSCode Textmate grammar test
 
 
@@ -158,11 +158,15 @@ Arguments:
   testcases                      A glob pattern(s) which specifies testcases to run, e.g. "./tests/**/test*.dhall". Quotes are important!
 
 Options:
-  -g, --grammar <grammar>        Path to a grammar file. Multiple options supported. 'scopeName' is taken from the grammar (default: [])
-  --config <configuration.json>  Path to the language configuration, package.json by default
-  -c, --compact                  Display output in the compact format, which is easier to use with VSCode problem matchers
-  -V, --version                  output the version number
-  -h, --help                     display help for command
+  -g, --grammar <grammar>          Path to a grammar file. Multiple options supported. 'scopeName' is taken from the grammar (default: [])
+  --config <configuration.json>    Path to the language configuration, package.json by default
+  -c, --compact                    Display output in the compact format, which is easier to use with VSCode problem matchers
+  --xunit-report <report.xml>      Path to directory where test reports in the XUnit format will
+                                   be emitted in addition to console output
+  --xunit-format <generic|gitlab>  Format of XML reports generated when --xunit-report is used.
+                                   `gitlab` format is suitable for viewing the results in GitLab
+  -V, --version                    output the version number
+  -h, --help                       display help for command
 ```
 
 Snapshot tests:
