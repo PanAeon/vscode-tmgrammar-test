@@ -204,6 +204,7 @@ You can setup a vscode unit test task for convenience:
                 "panel":"new"
             },
             "problemMatcher": {
+                "owner": "vscode-tmgrammar-test",
                 "fileLocation": [
                     "relative",
                     "${workspaceFolder}"
