@@ -87,7 +87,7 @@ So, if required scopes are `'scope1 scope2'`, the test will report an error if a
 
 To run a unit test:
 ```bash
-vscode-tmgrammar-test  'tests/unit/**/*.test.scala'
+vscode-tmgrammar-test 'tests/unit/**/*.test.scala'
 ```
 
 
@@ -194,20 +194,20 @@ Options:
 You can setup a vscode unit test task for convenience:
 
 ```json
-{
+        {
             "label": "Run tests",
             "type": "shell",
-            "command": "vscode-tmgrammar-test -c -g testcase/dhall.tmLanguage.json  \"**/*.dhall\"",
+            "command": "vscode-tmgrammar-test -c -g testcase/dhall.tmLanguage.json '**/*.dhall'",
             "group": "test",
             "presentation": {
                 "reveal": "always",
-                "panel":"new"
+                "panel":"new",
             },
             "problemMatcher": {
                 "owner": "vscode-tmgrammar-test",
                 "fileLocation": [
                     "relative",
-                    "${workspaceFolder}"
+                    "${workspaceFolder}",
                 ],
                 "pattern": [
                     {
@@ -217,12 +217,11 @@ You can setup a vscode unit test task for convenience:
                         "line": 3,
                         "column": 4,
                         "endColumn": 5,
-                        "message": 6
-
-                    }
-                ]
-            }
-        }
+                        "message": 6,
+                    },
+                ],
+            },
+        },
 ```
 
 Notice the `-c` option that will output messages in a handy format for the problemMatcher.
