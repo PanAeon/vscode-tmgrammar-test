@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import chalk from 'chalk'
 import { program } from 'commander'
 import glob from 'glob'
+import Bottleneck from 'bottleneck'
 import { runGrammarTestCase, parseGrammarTestCase, GrammarTestCase, TestFailure } from './unit/index'
 import {
   Reporter, CompositeReporter,
@@ -75,6 +76,11 @@ if (rawTestCases.length === 0) {
   process.exit(-1)
 }
 
+const limiter = new Bottleneck({
+  maxConcurrent: 8,
+  minTime: 0 
+})
+
 const testResults: Promise<number[]> = Promise.all(
   rawTestCases.map((filename): Promise<number> => {
     let tc: GrammarTestCase | undefined = undefined
@@ -87,7 +93,7 @@ const testResults: Promise<number[]> = Promise.all(
       })
     }
     let testCase = tc as GrammarTestCase
-    return runGrammarTestCase(registry, testCase)
+    return limiter.schedule(() => runGrammarTestCase(registry, testCase))
       .then((failures) => {
         reporter.reportTestResult(filename, testCase, failures)
         return failures.length === 0 ? TestSuccessful : TestFailed

@@ -10,6 +10,7 @@ import { EOL } from 'os'
 import { getVSCodeTokens, renderSnap, parseSnap, AnnotatedLine } from './snapshot/index'
 import * as diff from 'diff'
 import * as path from 'path'
+import Bottleneck from 'bottleneck'
 
 let packageJson = require('../package.json')
 
@@ -72,6 +73,11 @@ if (testCases.length === 0) {
 
 let { grammars, extensionToScope } = loadConfiguration(options.config, options.scope, options.grammar)
 
+const limiter = new Bottleneck({
+  maxConcurrent: 8,
+  minTime: 0 
+})
+
 const registry = createRegistry(grammars)
 const testResults: Promise<number[]> = Promise.all(
   testCases.map((filename) => {
@@ -82,7 +88,7 @@ const testResults: Promise<number[]> = Promise.all(
       console.log('No scope is associated with the file.')
       return TestFailed
     }
-    return getVSCodeTokens(registry, scope, src)
+    return limiter.schedule(() => getVSCodeTokens(registry, scope, src))
       .then((tokens) => {
         if (fs.existsSync(filename + '.snap')) {
           if (options.updateSnapshot) {
