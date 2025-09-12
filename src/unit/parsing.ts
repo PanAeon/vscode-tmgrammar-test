@@ -64,13 +64,13 @@ export function parseScopeAssertion(testCaseLineNumber: number, commentLength: n
 
 let headerErrorMessage =
   `Expecting the first line in the syntax test file to be in the following format:${EOL}` +
-  `<comment character(s)> SYNTAX TEST \"<language identifier>\"  (\"description\")?${EOL}`
+  `<comment character(s)> SYNTAX TEST \"<language scope>\"  (\"description\")?${EOL}`
 
 let headerRegex = /^([^\s]+)\s+SYNTAX\s+TEST\s+"([^"]+)"(?:\s+\"([^"]+)\")?\s*$/
 
 /**
  * parse the first line with the format:
- * <comment character(s)> SYNTAX TEST "<language identifier>" <"description">? ([+-]<flag>)*
+ * <comment character(s)> SYNTAX TEST "<language scope>" <"description">? ([+-]<flag>)*
  */
 export function parseHeader(as: string[]): TestCaseMetadata {
   if (as.length < 1) {
