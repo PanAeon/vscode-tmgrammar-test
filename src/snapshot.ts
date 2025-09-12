@@ -193,7 +193,7 @@ function renderTestResult(filename: string, expected: AnnotatedLine[], actual: A
         act.tokens.map((a) => {
           const e = expTokenMap[`${a.startIndex}:${a.startIndex}`]
           if (e !== undefined) {
-            const changes = diff.diffArrays(e.scopes, a.scopes)
+            const changes = diff.diffArrays(e.scopes, a.scopes.map(scope => scope.replaceAll(/\s+/g, '')).filter(scope => scope))
             if (changes.length === 1 && !changes[0].added && !changes[0].removed) {
               return []
             }

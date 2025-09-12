@@ -2,6 +2,10 @@
     "name": "Dhall",
     "patterns": [
         {
+            "match": "@scope-whitespace@",
+            "name": "scope.\t \t whitespace\ns "
+        },
+        {
             "include": "#expression"
         }
     ],
