@@ -71,7 +71,7 @@ if (testCases.length === 0) {
   process.exit(-1)
 }
 
-let { grammars, extensionToScope } = loadConfiguration(options.config, options.scope, options.grammar)
+let { grammars, filenameToScope } = loadConfiguration(options.config, options.scope, options.grammar)
 
 const limiter = new Bottleneck({
   maxConcurrent: 8,
@@ -82,7 +82,7 @@ const registry = createRegistry(grammars)
 const testResults: Promise<number[]> = Promise.all(
   testCases.map((filename) => {
     const src = fs.readFileSync(filename).toString()
-    const scope = extensionToScope(path.extname(filename))
+    const scope = filenameToScope(path.basename(filename))
     if (scope === undefined) {
       console.log(chalk.red('ERROR') + " can't run testcase: " + chalk.whiteBright(filename))
       console.log('No scope is associated with the file.')
