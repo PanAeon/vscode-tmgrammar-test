@@ -78,11 +78,11 @@ export function loadConfiguration(
   config: any,
   scope: any,
   grammar: any
-): { grammars: IGrammarConfig[]; extensionToScope: (ext: string) => string | undefined } {
+): { grammars: IGrammarConfig[]; filenameToScope: (filename: string) => string | undefined; } {
   const configPath = config || 'package.json'
 
   let grammars: IGrammarConfig[] = []
-  let extensionToScope: (ext: string) => string | undefined = (_) => scope || undefined
+  let filenameToScope: (filename: string) => string | undefined = (_) => scope || undefined
 
   if (grammar) {
     const xs = grammar.map((path: string) => ({ path, scopeName: '' }))
@@ -104,11 +104,15 @@ export function loadConfiguration(
       {},
       ...grammars.filter((x) => x.language).map((x) => ({ [x.language || '']: x.scopeName }))
     )
+    let filenameToLang = Object.assign(
+      {},
+      ...ys.map((x: any) => (x.filenames || []).map((e: any) => ({ [e]: x.id }))).flat()
+    );
     let extToLang = Object.assign(
       {},
       ...ys.map((x: any) => (x.extensions || []).map((e: any) => ({ [e]: x.id }))).flat()
     )
-    extensionToScope = (ext) => scope || langToScope[extToLang[ext]]
+    filenameToScope = (filename) => scope || langToScope[filenameToLang[filename]] || langToScope[Object.entries(extToLang as { [ext: string]: string }).find(([ext, lang]) => filename.endsWith(ext))?.[1] || '']
   }
-  return { grammars, extensionToScope }
+  return { grammars, filenameToScope };
 }
