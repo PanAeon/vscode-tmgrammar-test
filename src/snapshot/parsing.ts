@@ -47,7 +47,7 @@ export function renderSnap(xs: AnnotatedLine[]): string {
             ' '.repeat(token.startIndex) +
             '^'.repeat(token.endIndex - token.startIndex) +
             ' ' +
-            token.scopes.join(' ')
+            token.scopes.join(' ').replaceAll(/[\r\n\t]+/g, '')
         )
       })
     }
