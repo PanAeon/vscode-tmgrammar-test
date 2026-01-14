@@ -52,7 +52,7 @@
     "bottleneck": "^2.19.5",
     "chalk": "^2.4.2",
     "commander": "^9.2.0",
-    "diff": "^4.0.2",
+    "diff": "^8.0.3",
     "glob": "^7.1.6",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
