@@ -40,7 +40,7 @@ export function createRegistryFromGrammars(grammars: Array<{ grammar: IGrammarCo
 
   const wasmPath = require.resolve('vscode-oniguruma').replace(/main\.js$/, 'onig.wasm')
   const wasmBin = fs.readFileSync(wasmPath).buffer
-  const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin).then(() => {
+  const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin as ArrayBuffer).then(() => {
     return {
       createOnigScanner(patterns: any) {
         return new oniguruma.OnigScanner(patterns)
