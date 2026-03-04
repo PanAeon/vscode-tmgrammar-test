@@ -26,7 +26,7 @@ describe('parseHeader', () => {
   it('should throw meaningful error msg', () => {
     expect(parseHeader.bind({}, ['-- SYNTAX TEST sql"'])).to.throw(
       `Expecting the first line in the syntax test file to be in the following format:${EOL}` +
-        '<comment character(s)> SYNTAX TEST "<language identifier>"  ("description")?'
+        '<comment character(s)> SYNTAX TEST "<language scope>"  ("description")?'
     )
   })
 })
