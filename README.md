@@ -4,6 +4,10 @@
 
 Provides a way to test textmate grammars against a vscode engine using user-friendly plaintext files.
 
+> [!IMPORTANT]
+> This project is no longer maintained.
+> Please use https://github.com/serkonda7/textmate-grammar-test
+
 Demo:
 
 [![asciicast](https://asciinema.org/a/QoGS5fPsxDOHl1T43zzmFxJAU.svg)](https://asciinema.org/a/QoGS5fPsxDOHl1T43zzmFxJAU)
